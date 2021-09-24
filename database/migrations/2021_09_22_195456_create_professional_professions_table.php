@@ -15,10 +15,8 @@ class CreateProfessionalProfessionsTable extends Migration
     {
         Schema::create('professional_professions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->unsignedBigInteger('professional_id')->unique();
-            $table->foreign('professional_id')->references('id')->on('professionals');
-            $table->unsignedBigInteger('profession_id');
-            $table->foreign('profession_id')->references('id')->on('professions');
+            $table->foreignUuid('professional_id')->references('id')->on('professionals');
+            $table->foreignUuid('profession_id')->references('id')->on('professions');
             $table->timestamps();
         });
     }

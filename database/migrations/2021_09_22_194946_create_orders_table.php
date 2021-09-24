@@ -17,12 +17,9 @@ class CreateOrdersTable extends Migration
             $table->uuid('id')->primary();
             $table->date('date');
             $table->float('price');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedBigInteger('professional_id');
-            $table->foreign('professional_id')->references('id')->on('professionals');
-            $table->unsignedBigInteger('service_id');
-            $table->foreign('service_id')->references('id')->on('services');
+            $table->foreignUuid('user_id')->references('id')->on('users');
+            $table->foreignUuid('professional_id')->references('id')->on('professionals');
+            $table->foreignUuid('service_id')->references('id')->on('services');
             $table->timestamps();
         });
     }

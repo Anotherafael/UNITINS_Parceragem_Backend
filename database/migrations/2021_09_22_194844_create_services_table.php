@@ -16,8 +16,7 @@ class CreateServicesTable extends Migration
         Schema::create('services', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->unsignedBigInteger('profession_id');
-            $table->foreign('profession_id')->references('id')->on('professions');
+            $table->foreignUuid('profession_id')->references('id')->on('professions');
             $table->timestamps();
         });
     }

@@ -16,8 +16,7 @@ class CreateProfessionalRatingsTable extends Migration
         Schema::create('professional_ratings', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->float('rating');
-            $table->unsignedBigInteger('professional_id');
-            $table->foreign('professional_id')->references('id')->on('professionals');
+            $table->foreignUuid('professional_id')->references('id')->on('professionals');
             $table->timestamps();
         });
     }

@@ -16,8 +16,7 @@ class CreateUserRatingsTable extends Migration
         Schema::create('user_ratings', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->float('rating');
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreignUuid('user_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

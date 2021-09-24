@@ -16,8 +16,7 @@ class CreateProfessionsTable extends Migration
         Schema::create('professions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->unsignedBigInteger('section_id');
-            $table->foreign('section_id')->references('id')->on('sections');
+            $table->foreignUuid('section_id')->references('id')->on('sections');
             $table->timestamps();
         });
     }
