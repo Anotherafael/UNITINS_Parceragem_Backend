@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\Repositories\AuthRepository;
+use App\Repositories\Auth\AuthRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use PHPUnit\Framework\InvalidDataProviderException;
 

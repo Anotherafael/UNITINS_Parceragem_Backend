@@ -1,11 +1,11 @@
 <?php
 
 
-namespace App\Repositories;
+namespace App\Repositories\Auth;
 
 
-use App\Models\Professional;
-use App\Models\User;
+use App\Models\Auth\Professional;
+use App\Models\Auth\User;
 use Illuminate\Auth\Access\AuthorizationException;
 
 use Illuminate\Support\Facades\Hash;
