@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/auth/{provider}', ['as' => 'authenticate', 'uses' => 'AuthController@postAuthenticate']);
+Route::post('/auth/{provider}', ['as' => 'authenticate', 'uses' => 'Auth\AuthController@postAuthenticate']);
 

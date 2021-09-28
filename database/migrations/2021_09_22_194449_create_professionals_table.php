@@ -20,8 +20,6 @@ class CreateProfessionalsTable extends Migration
             $table->string('email')->unique();
             $table->string('photo_path')->nullable();
             $table->string('document_id')->unique();
-            $table->float('rating')->nullable();
-            $table->integer('calls')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
