@@ -20,13 +20,18 @@ class User extends Authenticatable
         'name',
         'phone',
         'email',
-        'document_id',    
-        'password',       
+        'document_id',
+        'password',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    // public function order()
+    // {
+    //     return $this->belongsToMany(Order::class, 'order_status_users', 'user_id', 'order_id');
+    // }
 
 }

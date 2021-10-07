@@ -2,8 +2,9 @@
 
 namespace App\Models\Service;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Service\Section;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Profession extends Model
 {
@@ -18,4 +19,9 @@ class Profession extends Model
         'name',
         'section_id'    
     ];
+
+    public function section()
+    {
+        return $this->hasOne(Section::class, 'section_id');
+    }
 }

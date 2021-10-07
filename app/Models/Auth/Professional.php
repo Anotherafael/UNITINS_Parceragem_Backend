@@ -26,4 +26,9 @@ class Professional extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function professions()
+    {
+        return $this->belongsToMany(Profession::class, 'professional_professions', 'professional_id', 'profession_id');
+    }
 }

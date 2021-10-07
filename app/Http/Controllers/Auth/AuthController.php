@@ -12,7 +12,7 @@ use PHPUnit\Framework\InvalidDataProviderException;
 class AuthController extends Controller
 {
 
-    private $repository;
+    protected $repository;
 
     public function __construct(AuthRepository $repository)
     {

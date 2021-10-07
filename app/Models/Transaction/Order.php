@@ -2,8 +2,11 @@
 
 namespace App\Models\Transaction;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Auth\User;
+use App\Models\Service\Service;
+use App\Models\Auth\Professional;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
@@ -19,7 +22,22 @@ class Order extends Model
         'price',
         'service_id',
         'professional_id',
-        'user_id'  
+
     ];
+
+    // public function users()
+    // {
+    //     return $this->belongsToMany(User::class);
+    // }
+
+    public function service()
+    {
+        return $this->hasOne(Service::class);
+    }
+
+    public function professional()
+    {
+        return $this->hasOne(Professional::class);
+    }
 
 }

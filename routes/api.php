@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,3 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/auth/{provider}', ['as' => 'authenticate', 'uses' => 'Auth\AuthController@postAuthenticate']);
+
+Route::post('user/store', ['as' => 'user_store', 'uses' => 'Auth\UserController@store']);
+
+Route::post('professional/store', ['as' => 'professional_store', 'uses' => 'Auth\ProfessionalController@store']);

@@ -2,8 +2,9 @@
 
 namespace App\Models\Service;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Service\Profession;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Service extends Model
 {
@@ -18,4 +19,9 @@ class Service extends Model
         'name',
         'profession_id'
     ];
+
+    public function profession()
+    {
+        return $this->hasOne(Profession::class);
+    }
 }
