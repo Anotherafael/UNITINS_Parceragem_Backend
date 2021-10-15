@@ -14,7 +14,7 @@ class CreateProfessionalProfessionsTable extends Migration
     public function up()
     {
         Schema::create('professional_professions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->id();
             $table->foreignUuid('professional_id')->references('id')->on('professionals');
             $table->foreignUuid('profession_id')->references('id')->on('professions');
             $table->timestamps();

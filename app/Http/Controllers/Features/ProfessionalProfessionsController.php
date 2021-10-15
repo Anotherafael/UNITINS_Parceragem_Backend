@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Features;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Repositories\Auth\ProfessionalRepository;
+use App\Repositories\Features\ProfessionalProfessionsRepository;
 
-class ProfessionalController extends Controller
+class ProfessionalProfessionsController extends Controller
 {
 
     protected $repository;
 
-    public function __construct(ProfessionalRepository $repository)
+    public function __construct(ProfessionalProfessionsRepository $repository)
     {
         $this->repository = $repository;
     }
-
     /**
      * Display a listing of the resource.
      *
@@ -33,23 +32,19 @@ class ProfessionalController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $id)
     {
         $validate = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'email' => 'required|email',
-            'phone' => 'required|numeric',
-            'password' => 'required',
-            'document_id' => 'required'
+            'profession' => 'required',
         ]);
 
         if ($validate->fails()) {
             return response()->json(['errors' => ['main' => 'Invalid inputs']], 400);
         }
         
-        $this->repository->create($request->all());
+        $this->repository->create($request->all(), $id);
 
-        return response()->json(['errors' => ['main' => 'Created with success']], 200);
+        return response()->json(['message' => 'everything okay, lil bro'], 200);
     }
 
     /**
@@ -75,4 +70,14 @@ class ProfessionalController extends Controller
         //
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
 }

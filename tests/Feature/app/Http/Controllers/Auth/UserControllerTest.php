@@ -14,7 +14,7 @@ class UserControllerTest extends TestCase
         parent::setUp();
     }
 
-    public function testUserShouldNotBeCreatedWithInvalidInput()
+    public function testUserShouldNotBeCreatedWithInvalidInputOrWrongProvider()
     {
         $payload = [
             'name' => 'Rafael Freitas',
@@ -24,7 +24,7 @@ class UserControllerTest extends TestCase
             'password' => 'secret'
         ];
 
-        $response = $this->post(route('user_store'), $payload);
+        $response = $this->post(route('user_register', ['provider' => 'professionassls']), $payload);
         $response->assertStatus(400);
         $response->assertJson(['errors' => ['main' => 'Invalid inputs']]);
     }
@@ -42,7 +42,7 @@ class UserControllerTest extends TestCase
             'password' => 'secret'
         ];
 
-        $response = $this->post(route('user_store'), $payload);
+        $response = $this->post(route('user_register', ['provider' => 'users']), $payload);
         $response->assertStatus(200);
         $response->assertJson(['errors' => ['main' => 'Created with success']]);
     }

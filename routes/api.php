@@ -13,8 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/auth/{provider}', ['as' => 'authenticate', 'uses' => 'Auth\AuthController@postAuthenticate']);
+Route::prefix('auth')->group(function () {
+    Route::post('/{provider}', ['as' => 'authenticate', 'uses' => 'Auth\AuthController@postAuthenticate']);
+    Route::post('register/{provider}', ['as' => 'user_register', 'uses' => 'Auth\UserController@store']);
+});
 
-Route::post('user/store', ['as' => 'user_store', 'uses' => 'Auth\UserController@store']);
+Route::prefix('features')->group(function () {
+    Route::post('add-professions/{id}', ['as' => 'add_professions', 'uses' => 'Features\ProfessionalProfessionsController@store']);
+});
 
-Route::post('professional/store', ['as' => 'professional_store', 'uses' => 'Auth\ProfessionalController@store']);
+Route::prefix('transaction')->group(function () {
+    
+});
+

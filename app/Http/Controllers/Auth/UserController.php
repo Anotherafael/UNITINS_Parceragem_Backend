@@ -35,7 +35,7 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, string $provider)
     {
         $validate = Validator::make($request->all(), [
             'name' => 'required|string',
@@ -49,7 +49,7 @@ class UserController extends Controller
             return response()->json(['errors' => ['main' => 'Invalid inputs']], 400);
         }
         
-        $this->repository->create($request->all());
+        $this->repository->create($request->all(), $provider);
 
         return response()->json(['errors' => ['main' => 'Created with success']], 200);
     }
