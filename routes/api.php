@@ -23,6 +23,6 @@ Route::prefix('features')->group(function () {
 });
 
 Route::prefix('transaction')->group(function () {
-    
+    Route::post('add-order', ['as' => 'add_order', 'uses' => 'Transaction\OrderController@store']);
 });
 
