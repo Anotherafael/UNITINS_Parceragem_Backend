@@ -21,10 +21,9 @@ class ProfessionalProfessionsControllerTest extends TestCase
         $this->artisan('passport:install');
 
         $user = Professional::factory()->create();
-        $profession = Profession::where('name', '=', 'Psícólogo')->first();
 
         $payload = [
-            
+            'profession_id' => 'wrong id',
         ];
 
         $response = $this->post(route('add_professions', ['id' => $user->id]), $payload);
@@ -32,7 +31,7 @@ class ProfessionalProfessionsControllerTest extends TestCase
         $response->assertJson(['errors' => ['main' => 'Invalid inputs']]);
     }
 
-    public function testIfWorks()
+    public function testProfessionalShouldAddProfessions()
     {
         $this->refreshDatabase();
         $this->artisan('passport:install');
@@ -41,7 +40,7 @@ class ProfessionalProfessionsControllerTest extends TestCase
         $profession = Profession::where('name', '=', 'Psícólogo')->first();
 
         $payload = [
-            'profession' => $profession->id,
+            'profession_id' => $profession->id,
         ];
 
         $response = $this->post(route('add_professions', ['id' => $user->id]), $payload);

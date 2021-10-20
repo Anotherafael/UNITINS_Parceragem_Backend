@@ -18,8 +18,8 @@ class ProfessionalProfessionsRepository
         try {
             DB::beginTransaction();
 
-            $user = Professional::where('id', '=', $id)->first();
-            $profession = Profession::where('id', '=', $fields['profession'])->first();
+            $user = Professional::find($id)->first();
+            $profession = Profession::find($fields['profession_id'])->first();
 
             $user->professions()->attach($profession);
 

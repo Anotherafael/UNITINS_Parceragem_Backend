@@ -25,11 +25,6 @@ class Order extends Model
 
     ];
 
-    // public function users()
-    // {
-    //     return $this->belongsToMany(User::class);
-    // }
-
     public function service()
     {
         return $this->hasOne(Service::class);

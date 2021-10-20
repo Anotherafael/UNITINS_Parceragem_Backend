@@ -1,21 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Features;
+namespace App\Http\Controllers\Transaction;
 
+use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Repositories\Features\ProfessionalProfessionsRepository;
+use App\Repositories\Transaction\RequestOrderRepository;
 
-class ProfessionalProfessionsController extends Controller
+class RequestOrderController extends Controller
 {
 
     protected $repository;
 
-    public function __construct(ProfessionalProfessionsRepository $repository)
+    public function __construct(RequestOrderRepository $repository)
     {
         $this->repository = $repository;
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -32,19 +34,22 @@ class ProfessionalProfessionsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $id)
+    public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'profession_id' => 'required|uuid',
+            'order_id' => 'required|uuid',
         ]);
 
         if ($validate->fails()) {
-            return response()->json(['errors' => ['main' => 'Invalid inputs']], 400);
+            return response()->json(['message' => 'Invalid inputs'], 400);
         }
-        
-        $this->repository->create($request->all(), $id);
 
-        return response()->json(['message' => 'everything okay, lil bro'], 200);
+        try {
+            $this->repository->create($request->all());
+            return response()->json(['message' => 'Request sent with success'], 200);
+        } catch (Exception $e) {
+            $e->getMessage();
+        }
     }
 
     /**

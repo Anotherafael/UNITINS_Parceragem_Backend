@@ -14,6 +14,8 @@ class Professional extends Authenticatable
 
     public $incrementing = false;
 
+    protected $table = 'professionals';
+
     protected $fillable = [
         'id',
         'name',
@@ -30,6 +32,6 @@ class Professional extends Authenticatable
 
     public function professions()
     {
-        return $this->belongsToMany(Profession::class, 'professional_professions', 'professional_id', 'profession_id');
+        return $this->belongsToMany(Profession::class, 'professional_professions', 'professional_id', 'profession_id')->withTimestamps();
     }
 }
