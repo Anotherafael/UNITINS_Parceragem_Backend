@@ -22,7 +22,7 @@ class Order extends Model
         'price',
         'service_id',
         'professional_id',
-
+        'status'
     ];
 
     public function service()
@@ -35,4 +35,17 @@ class Order extends Model
         return $this->hasOne(Professional::class);
     }
 
+    public function getStatusNameAttribute()
+    {
+        return $this->allStatus()[$this->status];
+    }
+
+    public static function allStatus()
+    {
+        return [
+            1 => 'Pendente',
+            'Encaminhado',
+            'Deletado'
+        ];
+    }
 }

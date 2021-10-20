@@ -25,5 +25,10 @@ Route::prefix('features')->group(function () {
 Route::prefix('transaction')->group(function () {
     Route::post('add-order', ['as' => 'add_order', 'uses' => 'Transaction\OrderController@store']);
     Route::post('request-order', ['as' => 'request_order', 'uses' => 'Transaction\RequestOrderController@store']);
+
+    Route::group(['prefix' => 'order'], function () {
+        Route::post('accept', ['as' => 'accept_order', 'uses' => 'Transaction\StatusController@accept']);
+        Route::post('reject', ['as' => 'reject_order', 'uses' => 'Transaction\StatusController@reject']);
+    });
 });
 
