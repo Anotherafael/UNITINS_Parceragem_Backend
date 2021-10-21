@@ -70,12 +70,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+            'model' => App\Models\Auth\User::class,
         ],
 
         'professionals' => [
             'driver' => 'eloquent',
-            'table' => App\Models\Professional::class,
+            'table' => App\Models\Auth\Professional::class,
         ],
     ],
 

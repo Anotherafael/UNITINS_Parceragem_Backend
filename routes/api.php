@@ -18,6 +18,9 @@ Route::prefix('auth')->group(function () {
     Route::post('register/{provider}', ['as' => 'user_register', 'uses' => 'Auth\UserController@store']);
 });
 
+Route::post('forgot-password', ['as' => 'forgot_password', 'uses' => 'Auth\NewPasswordController@forgotPassword']);
+Route::post('reset-password', ['as' => 'reset_password', 'uses' => 'Auth\NewPasswordController@reset']);
+
 Route::prefix('features')->group(function () {
     Route::post('add-professions/{id}', ['as' => 'add_professions', 'uses' => 'Features\ProfessionalProfessionsController@store']);
 });
@@ -25,10 +28,9 @@ Route::prefix('features')->group(function () {
 Route::prefix('transaction')->group(function () {
     Route::post('add-order', ['as' => 'add_order', 'uses' => 'Transaction\OrderController@store']);
     Route::post('request-order', ['as' => 'request_order', 'uses' => 'Transaction\RequestOrderController@store']);
-
+    
     Route::group(['prefix' => 'order'], function () {
         Route::post('accept', ['as' => 'accept_order', 'uses' => 'Transaction\StatusController@accept']);
         Route::post('reject', ['as' => 'reject_order', 'uses' => 'Transaction\StatusController@reject']);
     });
 });
-

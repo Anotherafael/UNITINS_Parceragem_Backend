@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 use App\Repositories\Auth\AuthRepository;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Access\AuthorizationException;
 use PHPUnit\Framework\InvalidDataProviderException;
 
@@ -22,10 +23,14 @@ class AuthController extends Controller
     public function postAuthenticate(Request $request, string $provider)
     {
 
-        $this->validate($request, [
+        $validate = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required'
         ]);
+
+        if ($validate->fails()) {
+            return response()->json(['errors' => ['main' => 'Invalid inputs']], 400);
+        }
 
         try {
             $fields = $request->only(['email', 'password']);
