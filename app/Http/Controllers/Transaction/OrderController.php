@@ -40,7 +40,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'service_id' => 'required',
+            'task_id' => 'required',
             'price' => 'required',
             'date' => 'required',
         ]);

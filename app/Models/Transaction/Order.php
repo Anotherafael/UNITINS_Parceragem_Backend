@@ -20,14 +20,14 @@ class Order extends Model
         'id',
         'date',
         'price',
-        'service_id',
+        'task_id',
         'professional_id',
         'status'
     ];
 
-    public function service()
+    public function task()
     {
-        return $this->hasOne(Service::class);
+        return $this->hasOne(Task::class);
     }
 
     public function professional()

@@ -34,3 +34,9 @@ Route::prefix('transaction')->group(function () {
         Route::post('reject', ['as' => 'reject_order', 'uses' => 'Transaction\StatusController@reject']);
     });
 });
+
+Route::prefix('service')->group(function () {
+    Route::get('sections', ['as' => 'get_sections', 'uses' => 'Service\SectionController@index']);
+    Route::get('professions', ['as' => 'get_professions', 'uses' => 'Service\ProfessionController@index']);
+    Route::get('tasks', ['as' => 'get_tasks', 'uses' => 'Service\TaskController@index']);
+});

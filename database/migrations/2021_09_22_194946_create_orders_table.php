@@ -18,7 +18,7 @@ class CreateOrdersTable extends Migration
             $table->date('date');
             $table->float('price');
             $table->integer('status')->default(1);
-            $table->foreignUuid('service_id')->references('id')->on('services');
+            $table->foreignUuid('task_id')->references('id')->on('tasks');
             $table->foreignUuid('professional_id')->references('id')->on('professionals');
             $table->timestamps();
         });

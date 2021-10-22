@@ -7,6 +7,7 @@ use Tests\TestCase;
 use App\Models\Auth\User;
 use App\Models\Service\Service;
 use App\Models\Auth\Professional;
+use App\Models\Service\Task;
 
 class OrderControllerTest extends TestCase
 {
@@ -21,7 +22,7 @@ class OrderControllerTest extends TestCase
         $this->refreshDatabase();
         $this->artisan('passport:install');
 
-        $service = Service::where('name', '=', 'Ansiedade')->first();
+        $service = Task::where('name', '=', 'Ansiedade')->first();
         $user = User::factory()->create();
 
         $payload = [
@@ -46,7 +47,7 @@ class OrderControllerTest extends TestCase
         $this->refreshDatabase();
         $this->artisan('passport:install');
 
-        $service = Service::where('name', '=', 'Ansiedade')->first();
+        $service = Task::where('name', '=', 'Ansiedade')->first();
         $user = Professional::factory()->create();
         
         $payload = [

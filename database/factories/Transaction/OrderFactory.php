@@ -3,7 +3,7 @@
 namespace Database\Factories\Transaction;
 
 use Carbon\Carbon;
-use App\Models\Service\Service;
+use App\Models\Service\Task;
 use App\Models\Auth\Professional;
 use App\Models\Transaction\Order;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -24,7 +24,7 @@ class OrderFactory extends Factory
      */
     public function definition()
     {
-        $service = Service::where('name', '=', 'Ansiedade')->first();
+        $service = Task::where('name', '=', 'Ansiedade')->first();
         $user = Professional::factory()->create();
         return [
             'id' => $this->faker->uuid,

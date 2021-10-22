@@ -3,11 +3,11 @@
 namespace Database\Seeders\Service;
 
 use Illuminate\Support\Str;
-use App\Models\Service\Service;
+use App\Models\Service\Task;
 use Illuminate\Database\Seeder;
 use App\Models\Service\Profession;
 
-class ServiceSeeder extends Seeder
+class TaskSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -25,7 +25,7 @@ class ServiceSeeder extends Seeder
         ];
 
         foreach ($services as $value) {
-            $service = Service::create([
+            $service = Task::create([
                 'id' => Str::uuid(),
                 'name' => $value,
                 'profession_id' => $profession->id
