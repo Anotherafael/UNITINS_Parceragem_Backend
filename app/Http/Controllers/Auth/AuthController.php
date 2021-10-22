@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Exceptions\Status;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\Controller;
 use App\Repositories\Auth\AuthRepository;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -22,26 +23,24 @@ class AuthController extends Controller
 
     public function postAuthenticate(Request $request, string $provider)
     {
-
+        
         $validate = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
         if ($validate->fails()) {
-            return response()->json(['errors' => ['main' => 'Invalid inputs']], 400);
+            return $this->sendError(Status::getStatusMessage(400), [], 400);
         }
 
         try {
             $fields = $request->only(['email', 'password']);
             $result = $this->repository->authenticate($provider, $fields);
-            return response()->json($result);
+            return $this->sendResponse($result, "Authenticated with success");
         } catch (InvalidDataProviderException $exception) {
-            return response()->json(['errors' => ['main' => $exception->getMessage()]], 422);
+            return $this->sendError($exception->getMessage(), [], 422);
         } catch (AuthorizationException $exception) {
-            return response()->json(['errors' => ['main' => $exception->getMessage()]], 401);
-        } catch (\Exception $exception) {
-            return response()->json(['errors' => ['main' => $exception->getMessage()]], 123);
+            return $this->sendError($exception->getMessage(), [], 401);
         }
 
     }

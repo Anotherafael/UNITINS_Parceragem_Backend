@@ -15,6 +15,7 @@ class StatusControllerTest extends TestCase
 
     public function testProfessionalShouldAcceptRequestOrder()
     {
+        $code = 200;
         $this->refreshDatabase();
         $this->artisan('passport:install');
 
@@ -27,12 +28,17 @@ class StatusControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'professionals')->post(route('accept_order'), $payload);
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'Accepted']);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => true, 
+            'message' => 'Accepted'
+        ]);
     }
 
     public function testProfessionalShouldRejectRequestOrder()
     {
+        $code = 200;
         $this->refreshDatabase();
         $this->artisan('passport:install');
 
@@ -45,7 +51,11 @@ class StatusControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'professionals')->post(route('reject_order'), $payload);
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'Rejected']);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => true, 
+            'message' => 'Rejected'
+        ]);
     }
 }

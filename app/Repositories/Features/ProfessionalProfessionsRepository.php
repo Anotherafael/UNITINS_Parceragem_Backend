@@ -7,18 +7,19 @@ use Exception;
 use App\Models\Auth\Professional;
 use App\Models\Service\Profession;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 
 class ProfessionalProfessionsRepository
 {
 
-    public function create(array $fields, $id)
+    public function create(array $fields)
     {
 
         try {
             DB::beginTransaction();
 
-            $user = Professional::find($id)->first();
+            $user = Professional::find(Auth::user()->id)->first();
             $profession = Profession::find($fields['profession_id'])->first();
 
             $user->professions()->attach($profession);
@@ -27,7 +28,7 @@ class ProfessionalProfessionsRepository
         } catch (Exception $e) {
             DB::rollback();
             dd($e->getMessage());
-            return response()->json(['errors' => ['main' => 'SQL Transaction Error']], 500);
+            return response()->json(['message' => 'SQL Transaction Error'], 500);
         }
     }
 

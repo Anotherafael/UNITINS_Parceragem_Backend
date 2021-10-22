@@ -21,7 +21,7 @@ class RequestOrderRepository
         try {
             DB::beginTransaction();
             $order = Order::find($fields['order_id'])->first();
-            $user = User::find(Auth::user()->id);
+            $user = User::find(Auth::user()->id)->first();
             $user->orders()->attach($order);
             DB::commit();
         } catch (Exception $e) {

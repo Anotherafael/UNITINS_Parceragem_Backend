@@ -22,7 +22,7 @@ Route::post('forgot-password', ['as' => 'forgot_password', 'uses' => 'Auth\NewPa
 Route::post('reset-password', ['as' => 'reset_password', 'uses' => 'Auth\NewPasswordController@reset']);
 
 Route::prefix('features')->group(function () {
-    Route::post('add-professions/{id}', ['as' => 'add_professions', 'uses' => 'Features\ProfessionalProfessionsController@store']);
+    Route::post('add-professions', ['as' => 'add_professions', 'uses' => 'Features\ProfessionalProfessionsController@store']);
 });
 
 Route::prefix('transaction')->group(function () {

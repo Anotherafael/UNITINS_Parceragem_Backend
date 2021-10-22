@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Features;
 
+use App\Exceptions\Status;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\Features\ProfessionalProfessionsRepository;
+use Exception;
 
 class ProfessionalProfessionsController extends Controller
 {
@@ -32,19 +34,22 @@ class ProfessionalProfessionsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $id)
+    public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
             'profession_id' => 'required|uuid',
         ]);
 
         if ($validate->fails()) {
-            return response()->json(['errors' => ['main' => 'Invalid inputs']], 400);
+            return $this->sendError(Status::getStatusMessage(400), [], 400);
         }
-        
-        $this->repository->create($request->all(), $id);
 
-        return response()->json(['message' => 'everything okay, lil bro'], 200);
+        try {
+            $this->repository->create($request->all());
+            return $this->sendResponse([], "Profession added with success");
+        } catch (Exception $e) {
+
+        }
     }
 
     /**

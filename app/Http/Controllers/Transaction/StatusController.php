@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Transaction;
 
 use Exception;
+use App\Exceptions\Status;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -29,12 +30,12 @@ class StatusController extends Controller
         ]);
 
         if ($validate->fails()) {
-            return response()->json(['message' => 'Invalid inputs'], 400);
+            return $this->sendError(Status::getStatusMessage(400), [], 400);
         }
 
         try {
             $this->repository->handleAccept($request->all());
-            return response()->json(['message' => 'Accepted'], 200);
+            return $this->sendResponse([], "Accepted");
         } catch (Exception $e) {
             $e->getMessage();
         }
@@ -52,12 +53,12 @@ class StatusController extends Controller
         ]);
 
         if ($validate->fails()) {
-            return response()->json(['message' => 'Invalid inputs'], 400);
+            return $this->sendError(Status::getStatusMessage(400), [], 400);
         }
 
         try {
             $this->repository->handleReject($request->all());
-            return response()->json(['message' => 'Rejected'], 200);
+            return $this->sendResponse([], "Rejected");
         } catch (Exception $e) {
             $e->getMessage();
         }

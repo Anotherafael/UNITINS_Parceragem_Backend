@@ -17,19 +17,24 @@ class ResetPasswordControllerTest extends TestCase
     
     public function testUserShouldAddNewPassword()
     {
+        $code = 200;
         $this->refreshDatabaseOnlyMigrate();
         $this->artisan('passport:install');
 
         $user = User::where('name', '=', 'Serena Williams')->first();
 
         $payload = [
-            'token' => '3cb467bd233e3b871f65ff3fb9f402631a654f57eb78bb1f0962aac560650c93',
+            'token' => '392af132eae5c8dde9438aca6f709c8c31f0e2ed1be13f9617eb7d9b1a827b1f',
             'email' => $user->email,
             'password' => 'secret123',
         ];
         
         $response = $this->post(route('reset_password'), $payload);
-        $response->assertStatus(200);
-        $response->assertJson(['message'=> 'Password reset successfully']);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => true, 
+            'message' => 'Password reset successfully'
+        ]);
     }
 }

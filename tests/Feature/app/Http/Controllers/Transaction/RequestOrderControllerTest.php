@@ -2,13 +2,9 @@
 
 namespace Tests\Feature\app\Http\Controllers\Transaction;
 
-use Carbon\Carbon;
 use Tests\TestCase;
 use App\Models\Auth\User;
-use App\Models\Service\Service;
 use App\Models\Transaction\Order;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RequestOrderControllerTest extends TestCase
 {
@@ -17,8 +13,9 @@ class RequestOrderControllerTest extends TestCase
         parent::setUp();
     }
 
-    public function testUserShouldNotSendWrongInputs()
+    public function testValidateInputs()
     {
+        $code = 400;
         $this->refreshDatabase();
         $this->artisan('passport:install');
 
@@ -30,12 +27,17 @@ class RequestOrderControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'users')->post(route('request_order'), $payload);
-        $response->assertStatus(400);
-        $response->assertJson(['message' => 'Invalid inputs']);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => false, 
+            'message' => 'Invalid inputs'
+        ]);
     }
 
     public function testUserShouldRequestAnOrder()
     {
+        $code = 200;
         $this->refreshDatabase();
         $this->artisan('passport:install');
 
@@ -48,7 +50,11 @@ class RequestOrderControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'users')->post(route('request_order'), $payload);
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'Request sent with success']);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => true, 
+            'message' => 'Request sent'
+        ]);
     }
 }

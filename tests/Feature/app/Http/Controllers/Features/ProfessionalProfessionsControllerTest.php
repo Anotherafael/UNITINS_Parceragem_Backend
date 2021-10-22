@@ -15,24 +15,30 @@ class ProfessionalProfessionsControllerTest extends TestCase
         parent::setUp();
     }
 
-    public function testUserShouldNotSendInvalidInput()
+    public function testValidateInputs()
     {
+        $code = 400;
         $this->refreshDatabase();
         $this->artisan('passport:install');
-
+        
         $user = Professional::factory()->create();
-
         $payload = [
             'profession_id' => 'wrong id',
         ];
 
         $response = $this->post(route('add_professions', ['id' => $user->id]), $payload);
-        $response->assertStatus(400);
-        $response->assertJson(['errors' => ['main' => 'Invalid inputs']]);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => false, 
+            'message' => 'Invalid inputs'
+        ]);
+
     }
 
     public function testProfessionalShouldAddProfessions()
     {
+        $code = 200;
         $this->refreshDatabase();
         $this->artisan('passport:install');
 
@@ -43,8 +49,13 @@ class ProfessionalProfessionsControllerTest extends TestCase
             'profession_id' => $profession->id,
         ];
 
-        $response = $this->post(route('add_professions', ['id' => $user->id]), $payload);
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'everything okay, lil bro']);
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $response = $this->actingAs($user, 'professionals')->post(route('add_professions'), $payload);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => true, 
+            'message' => 'Profession added with success'
+        ]);
     }
 }

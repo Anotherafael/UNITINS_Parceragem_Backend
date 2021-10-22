@@ -5,11 +5,8 @@ namespace Tests\Feature\app\Http\Controllers\Transaction;
 use Carbon\Carbon;
 use Tests\TestCase;
 use App\Models\Auth\User;
-use Laravel\Passport\Passport;
 use App\Models\Service\Service;
 use App\Models\Auth\Professional;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class OrderControllerTest extends TestCase
 {
@@ -20,7 +17,7 @@ class OrderControllerTest extends TestCase
 
     public function testUserShouldNotCreateAnOrder()
     {
-
+        $code = 401;
         $this->refreshDatabase();
         $this->artisan('passport:install');
 
@@ -35,13 +32,17 @@ class OrderControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'users')->post(route('add_order'), $payload);
-        $response->assertStatus(401);
-        $response->assertJson(['message' => 'Function not authorized']);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => false, 
+            'message' => 'Unauthorized'
+        ]);
     }
 
     public function testProfessionalShouldCreateAnOrder()
     {
-
+        $code = 200;
         $this->refreshDatabase();
         $this->artisan('passport:install');
 
@@ -55,8 +56,12 @@ class OrderControllerTest extends TestCase
         ];
         
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
-        $response = $this->actingAs($user, 'users')->post(route('add_order'), $payload);
-        $response->assertStatus(200);
-        $response->assertJson(['message' => 'Created with success']);
+        $response = $this->actingAs($user, 'professionals')->post(route('add_order'), $payload);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => true, 
+            'message' => 'Created with success'
+        ]);
     }
 }

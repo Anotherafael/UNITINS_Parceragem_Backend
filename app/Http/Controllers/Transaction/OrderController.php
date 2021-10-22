@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use App\Exceptions\Status;
 use Illuminate\Http\Request;
 use App\Exceptions\OrderException;
 use Illuminate\Support\Facades\Log;
@@ -45,20 +46,16 @@ class OrderController extends Controller
         ]);
 
         if ($validate->fails()) {
-            return response()->json(['errors' => ['main' => 'Invalid inputs']], 400);
+            return $this->sendError(Status::getStatusMessage(400), [], 400);
         }
 
         try {
             $this->repository->create($request->all());
-            return response()->json(['message' => 'Created with success'], 200);
+            return $this->sendResponse([], "Created with success");
         } catch (OrderException $exception) {
-            return response()->json(['message' => $exception->getMessage()], 401);
+            return $this->sendError($exception->getMessage(), [], 401);
         } catch (InvalidDataProviderException $exception) {
-            return response()->json(['message' => $exception->getMessage()], 422);
-        } catch (\Exception $exception) {
-            Log::critical('[Creating Order Gone So Wrong]', [
-                'message' => $exception->getMessage()
-            ]);
+            return $this->sendError($exception->getMessage(), [], 422);
         }
 
 

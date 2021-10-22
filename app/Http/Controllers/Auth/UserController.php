@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\Auth\User;
-use Illuminate\Support\Str;
+use Exception;
+use App\Exceptions\Status;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\Auth\UserRepository;
 use Illuminate\Support\Facades\Validator;
+use PHPUnit\Framework\InvalidDataProviderException;
 
 class UserController extends Controller
 {
@@ -46,12 +47,15 @@ class UserController extends Controller
         ]);
 
         if ($validate->fails()) {
-            return response()->json(['errors' => ['main' => 'Invalid inputs']], 400);
+            return $this->sendError(Status::getStatusMessage(400), [], 400);
         }
         
-        $this->repository->create($request->all(), $provider);
-
-        return response()->json(['errors' => ['main' => 'Created with success']], 200);
+        try {
+            $this->repository->create($request->all(), $provider);
+            return $this->sendResponse([], "Created with success");
+        } catch (InvalidDataProviderException $e) {
+            return $this->sendError($e->getMessage(), [], 422);
+        }
     }
 
     /**

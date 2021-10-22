@@ -40,7 +40,7 @@ class UserRepository
         } else if ($provider == "professionals") {
             return new Professional();
         } else {
-            throw new InvalidDataProviderException('Provider Not found');
+            throw new InvalidDataProviderException('Provider Not Found');
         }
     }
 }

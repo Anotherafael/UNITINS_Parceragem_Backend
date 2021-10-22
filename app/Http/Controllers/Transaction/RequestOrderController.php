@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Transaction;
 
 use Exception;
+use App\Exceptions\Status;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
@@ -41,12 +42,12 @@ class RequestOrderController extends Controller
         ]);
 
         if ($validate->fails()) {
-            return response()->json(['message' => 'Invalid inputs'], 400);
+            return $this->sendError(Status::getStatusMessage(400), [], 400);
         }
 
         try {
             $this->repository->create($request->all());
-            return response()->json(['message' => 'Request sent with success'], 200);
+            return $this->sendResponse([], "Request sent");
         } catch (Exception $e) {
             $e->getMessage();
         }

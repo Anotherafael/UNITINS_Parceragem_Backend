@@ -19,7 +19,7 @@ class OrderRepository
     {
 
         if (!$this->guardCanCreateOrder()) {
-            throw new OrderException('Function not authorized', 401);
+            throw new OrderException('Unauthorized', 401);
         }
         
         try {
@@ -31,7 +31,7 @@ class OrderRepository
         } catch (Exception $e) {
             DB::rollback();
             dd($e->getMessage());
-            return response()->json(['errors' => ['main' => 'SQL Transaction Error']], 500);
+            return response()->json(['message' => 'SQL Transaction Error'], 500);
         }
     }
 
@@ -42,7 +42,7 @@ class OrderRepository
         } else if (Auth::guard('professionals')->check()) {
             return true;
         } else {
-            throw new InvalidDataProviderException('Provider Not found', 422);
+            throw new InvalidDataProviderException('Provider Not Found');
         }
     }
 

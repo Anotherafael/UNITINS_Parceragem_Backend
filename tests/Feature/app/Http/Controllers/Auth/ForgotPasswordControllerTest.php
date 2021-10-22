@@ -15,6 +15,7 @@ class ForgotPasswordControllerTest extends TestCase
     
     public function testUserShouldSendAValidEmail()
     {
+        $code = 200;
         $this->refreshDatabase();
         $this->artisan('passport:install');
         
@@ -25,8 +26,12 @@ class ForgotPasswordControllerTest extends TestCase
         ];
         
         $response = $this->post(route('forgot_password'), $payload);
-        $response->assertStatus(200);
-        $response->assertJson(['status' => 'We have emailed your password reset link!']);
+        $response->assertStatus($code);
+        $response->assertJson([
+            'status' => $code, 
+            'success' => true, 
+            'message' => 'We have emailed your password reset link!'
+        ]);
     }
 
 }
