@@ -24,11 +24,11 @@ class OrderFactory extends Factory
      */
     public function definition()
     {
-        $service = Task::where('name', '=', 'Ansiedade')->first();
+        $task = Task::where('name', '=', 'Ansiedade')->first();
         $user = Professional::factory()->create();
         return [
             'id' => $this->faker->uuid,
-            'service_id' => $service->id,
+            'task_id' => $task->id,
             'professional_id' => $user->id,
             'price' => 1000,
             'date' => Carbon::now()

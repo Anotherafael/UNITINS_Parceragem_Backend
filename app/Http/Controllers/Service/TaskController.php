@@ -16,7 +16,6 @@ class TaskController extends Controller
     public function index()
     {
         $data = Task::select("tasks.*")->orderBy('tasks.name')->get();
-        dd($data);
         return $this->sendResponse($data);
     }
 

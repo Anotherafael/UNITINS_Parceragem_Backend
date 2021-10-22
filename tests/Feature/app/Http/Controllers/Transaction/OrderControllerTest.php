@@ -26,7 +26,7 @@ class OrderControllerTest extends TestCase
         $user = User::factory()->create();
 
         $payload = [
-            'service_id' => $service->id,
+            'task_id' => $service->id,
             'price' => 1000.0,
             'date' => Carbon::now()
         ];
@@ -51,7 +51,7 @@ class OrderControllerTest extends TestCase
         $user = Professional::factory()->create();
         
         $payload = [
-            'service_id' => $service->id,
+            'task_id' => $service->id,
             'price' => 1000.0,
             'date' => Carbon::now()
         ];

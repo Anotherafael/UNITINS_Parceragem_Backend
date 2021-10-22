@@ -3,7 +3,6 @@
 namespace App\Models\Transaction;
 
 use App\Models\Auth\User;
-use App\Models\Service\Service;
 use App\Models\Auth\Professional;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
