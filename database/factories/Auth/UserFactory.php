@@ -25,7 +25,7 @@ class UserFactory extends Factory
     {
         return [
             'id' => $this->faker->uuid,
-            'name' => 'Serena Williams',
+            'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail(),
             'document_id' => rand(11111111, 99999999),
             'phone' => rand(11111111, 99999999),

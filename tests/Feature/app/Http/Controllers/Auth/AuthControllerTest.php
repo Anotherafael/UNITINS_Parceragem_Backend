@@ -14,7 +14,7 @@ class AuthControllerTest extends TestCase
         parent::setUp();
     }
 
-    public function testValidateInputs()
+    public function testCheckIfInputsAreValid()
     {
         $code = 400;
 

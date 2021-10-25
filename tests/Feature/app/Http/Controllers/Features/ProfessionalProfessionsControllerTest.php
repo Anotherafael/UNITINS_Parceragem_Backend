@@ -15,7 +15,7 @@ class ProfessionalProfessionsControllerTest extends TestCase
         parent::setUp();
     }
 
-    public function testValidateInputs()
+    public function testCheckIfInputsAreValid()
     {
         $code = 400;
         $this->refreshDatabase();
@@ -26,7 +26,8 @@ class ProfessionalProfessionsControllerTest extends TestCase
             'profession_id' => 'wrong id',
         ];
 
-        $response = $this->post(route('add_professions', ['id' => $user->id]), $payload);
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $response = $this->actingAs($user)->post(route('add_professions'), $payload);
         $response->assertStatus($code);
         $response->assertJson([
             'status' => $code, 

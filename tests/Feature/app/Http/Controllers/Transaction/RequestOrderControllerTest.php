@@ -13,7 +13,7 @@ class RequestOrderControllerTest extends TestCase
         parent::setUp();
     }
 
-    public function testValidateInputs()
+    public function testCheckIfInputsAreValid()
     {
         $code = 400;
         $this->refreshDatabase();
@@ -22,7 +22,7 @@ class RequestOrderControllerTest extends TestCase
         $user = User::factory()->create();
 
         $payload = [
-            'order_id' => 'wrong id',
+            'order_id' => 'wrong uuid',
         ];
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */

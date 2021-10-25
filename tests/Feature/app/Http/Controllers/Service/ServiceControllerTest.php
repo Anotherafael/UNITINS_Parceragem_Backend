@@ -3,14 +3,24 @@
 namespace Tests\Feature\app\Http\Controllers\Service;
 
 use Tests\TestCase;
+use App\Models\Auth\User;
 
 class ServiceControllerTest extends TestCase
 {
-    public function testGetSections()
-    {
-        $code = 200;
 
+    public function testCheckIfUserIsAuthenticate() {
         $response = $this->get(route('get_sections'));
+        $response->assertStatus(302);
+        $response->assertRedirect('/api/v1/home');
+    }
+
+    public function testCheckIfCanGetSections()
+    {
+        $code = 200;
+        $user = User::factory()->create();
+
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $response = $this->actingAs($user, 'professionals')->get(route('get_sections'));
         $response->assertStatus($code);
         $response->assertJson([
             'status' => $code, 
@@ -22,11 +32,13 @@ class ServiceControllerTest extends TestCase
         ]);
     }
 
-    public function testGetProfessions()
+    public function testCheckIfCanGetProfessions()
     {
         $code = 200;
+        $user = User::factory()->create();
 
-        $response = $this->get(route('get_professions'));
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $response = $this->actingAs($user, 'users')->get(route('get_professions'));
         $response->assertStatus($code);
         $response->assertJson([
             'status' => $code, 
@@ -38,11 +50,13 @@ class ServiceControllerTest extends TestCase
         ]);
     }
 
-    public function testGetTasks()
+    public function testCheckIfCanGetTasks()
     {
         $code = 200;
+        $user = User::factory()->create();
 
-        $response = $this->get(route('get_tasks'));
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $response = $this->actingAs($user, 'users')->get(route('get_tasks'));
         $response->assertStatus($code);
         $response->assertJson([
             'status' => $code, 
