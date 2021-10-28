@@ -14,35 +14,36 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'v1'], function () {
-    
+
     Route::get('home', ['as' => 'home', 'uses' => 'HomeController@index']);
-    Route::post('login/{provider}', ['as' => 'authenticate', 'uses' => 'Auth\AuthController@postAuthenticate']);
-    Route::post('register/{provider}', ['as' => 'user_register', 'uses' => 'Auth\UserController@store']);
+    Route::post('auth/login/{provider}', ['as' => 'login', 'uses' => 'Auth\AuthController@login']);
+    Route::post('auth/register/{provider}', ['as' => 'register', 'uses' => 'Auth\AuthController@register']);
 
     Route::post('forgot-password', ['as' => 'forgot_password', 'uses' => 'Auth\NewPasswordController@forgotPassword']);
-    Route::post('reset-password', ['as' => 'reset_password', 'uses' => 'Auth\NewPasswordController@reset']);
+    Route::post('reset-password', ['as' => 'reset_password', 'uses' => 'Auth\NewPasswordController@resetPassword']);
 
-    Route::middleware(['auth'])->group(function () {
+    Route::middleware(['auth:api'])->group(function () {
 
-        Route::prefix('transaction')->group(function () {
-            Route::post('add-order', ['as' => 'add_order', 'uses' => 'Transaction\OrderController@store']);
-            Route::post('request-order', ['as' => 'request_order', 'uses' => 'Transaction\RequestOrderController@store']);
-        });
-        
-        Route::prefix('features')->group(function () {
-            Route::post('add-professions', ['as' => 'add_professions', 'uses' => 'Features\ProfessionalProfessionsController@store']);
-        });
+        Route::post('auth/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@logout']);
 
-        Route::group(['prefix' => 'order'], function () {
-            Route::post('accept', ['as' => 'accept_order', 'uses' => 'Transaction\StatusController@accept']);
-            Route::post('reject', ['as' => 'reject_order', 'uses' => 'Transaction\StatusController@reject']);
-        });
-        
         Route::prefix('service')->group(function () {
             Route::get('sections', ['as' => 'get_sections', 'uses' => 'Service\SectionController@index']);
             Route::get('professions', ['as' => 'get_professions', 'uses' => 'Service\ProfessionController@index']);
             Route::get('tasks', ['as' => 'get_tasks', 'uses' => 'Service\TaskController@index']);
         });
         
+        Route::prefix('transaction')->group(function () {
+            Route::post('request-order', ['as' => 'request_order', 'uses' => 'Transaction\RequestOrderController@store']);
+            Route::post('addorder', ['as' => 'add_order', 'uses' => 'Transaction\OrderController@store']);
+        });
+    
+        Route::prefix('features')->group(function () {
+            Route::post('add-professions', ['as' => 'add_professions', 'uses' => 'Features\ProfessionalProfessionsController@addProfession']);
+        });
+    
+        Route::group(['prefix' => 'order'], function () {
+            Route::post('accept', ['as' => 'accept_order', 'uses' => 'Transaction\StatusController@accept']);
+            Route::post('reject', ['as' => 'reject_order', 'uses' => 'Transaction\StatusController@reject']);
+        });
     });
 });

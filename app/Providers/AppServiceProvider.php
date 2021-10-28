@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use Laravel\Passport\Passport;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Passport::ignoreMigrations();
+        Sanctum::ignoreMigrations();
     }
 }

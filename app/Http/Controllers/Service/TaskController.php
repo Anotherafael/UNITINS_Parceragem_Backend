@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Service;
 use App\Models\Service\Task;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Traits\ApiResponser;
 
 class TaskController extends Controller
 {
+    use ApiResponser;
     /**
      * Display a listing of the resource.
      *
@@ -16,7 +18,7 @@ class TaskController extends Controller
     public function index()
     {
         $data = Task::select("tasks.*")->orderBy('tasks.name')->get();
-        return $this->sendResponse($data);
+        return $this->success($data);
     }
 
     /**

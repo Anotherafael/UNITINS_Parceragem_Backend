@@ -13,13 +13,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class StatusControllerTest extends TestCase
 {
 
-    public function testProfessionalShouldAcceptRequestOrder()
+    /** @test */
+    public function user_is_not_allowed_to_accept_or_reject_an_order_request()
     {
-        $code = 200;
         $this->refreshDatabase();
-        $this->artisan('passport:install');
 
-        $user = Professional::factory()->create();
+        $user = User::factory()->create();
         $request_order = RequestOrder::factory()->create();
         
         $payload = [
@@ -27,20 +26,39 @@ class StatusControllerTest extends TestCase
         ];
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
-        $response = $this->actingAs($user, 'professionals')->post(route('accept_order'), $payload);
-        $response->assertStatus($code);
+        $response = $this->actingAs($user, 'users')->post(route('accept_order'), $payload);
+        $response->assertStatus(401);
         $response->assertJson([
-            'status' => $code, 
-            'success' => true, 
-            'message' => 'Accepted'
+            'status' => 'Error',
+            'message' => 'User is not allowed to accept/reject orders'
         ]);
     }
 
-    public function testProfessionalShouldRejectRequestOrder()
+    /** @test */
+    public function professional_should_accept_an_order_request()
     {
-        $code = 200;
         $this->refreshDatabase();
-        $this->artisan('passport:install');
+        
+        $user = Professional::factory()->create();
+        $request_order = RequestOrder::factory()->create();
+        
+        $payload = [
+            'request_order_id' => $request_order->id,
+        ];
+        
+        /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
+        $response = $this->actingAs($user, 'professionals')->post(route('accept_order'), $payload);
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 'Success',
+            'message' => 'Accepted'
+        ]);
+    }
+    
+    /** @test */
+    public function professional_should_reject_an_order_request()
+    {
+        $this->refreshDatabase();
 
         $user = Professional::factory()->create();
         $request_order = RequestOrder::factory()->create();
@@ -51,10 +69,9 @@ class StatusControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'professionals')->post(route('reject_order'), $payload);
-        $response->assertStatus($code);
+        $response->assertStatus(200);
         $response->assertJson([
-            'status' => $code, 
-            'success' => true, 
+            'status' => 'Success',
             'message' => 'Rejected'
         ]);
     }

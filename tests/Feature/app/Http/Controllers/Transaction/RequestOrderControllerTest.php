@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\app\Http\Controllers\Transaction;
 
+use App\Models\Auth\Professional;
 use Tests\TestCase;
 use App\Models\Auth\User;
 use App\Models\Transaction\Order;
@@ -13,33 +14,31 @@ class RequestOrderControllerTest extends TestCase
         parent::setUp();
     }
 
-    public function testCheckIfInputsAreValid()
+    /** @test */
+    public function professional_is_not_allowed_to_make_an_order_request()
     {
-        $code = 400;
         $this->refreshDatabase();
-        $this->artisan('passport:install');
 
-        $user = User::factory()->create();
+        $user = Professional::factory()->create();
+        $order = Order::factory()->create();
 
         $payload = [
-            'order_id' => 'wrong uuid',
+            'order_id' => $order->id,
         ];
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
-        $response = $this->actingAs($user, 'users')->post(route('request_order'), $payload);
-        $response->assertStatus($code);
+        $response = $this->actingAs($user, 'professionals')->post(route('request_order'), $payload);
+        $response->assertStatus(401);
         $response->assertJson([
-            'status' => $code, 
-            'success' => false, 
-            'message' => 'Invalid inputs'
+            'status' => 'Error',
+            'message' => 'Professional is not allowed to request orders'
         ]);
     }
 
-    public function testUserShouldRequestAnOrder()
+    /** @test */
+    public function user_is_allowed_to_make_an_order_request()
     {
-        $code = 200;
         $this->refreshDatabase();
-        $this->artisan('passport:install');
 
         $user = User::factory()->create();
         $order = Order::factory()->create();
@@ -50,10 +49,9 @@ class RequestOrderControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'users')->post(route('request_order'), $payload);
-        $response->assertStatus($code);
+        $response->assertStatus(200);
         $response->assertJson([
-            'status' => $code, 
-            'success' => true, 
+            'status' => 'Success',
             'message' => 'Request sent'
         ]);
     }

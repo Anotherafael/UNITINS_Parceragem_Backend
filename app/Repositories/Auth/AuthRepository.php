@@ -3,17 +3,46 @@
 
 namespace App\Repositories\Auth;
 
+use Exception;
+use App\Models\Auth\User;
+use Illuminate\Support\Str;
+use App\Traits\ApiResponser;
+use App\Exceptions\SqlException;
 
 use App\Models\Auth\Professional;
-use App\Models\Auth\User;
-use Illuminate\Auth\Access\AuthorizationException;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Access\AuthorizationException;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class AuthRepository
 {
-    public function authenticate(string $provider, array $fields): array
+
+    use ApiResponser;
+
+    public function register(array $fields, string $provider)
+    {
+        $selectedProvider = $this->getProvider($provider);
+
+        if ($this->isExistingUser($selectedProvider, $fields)) {
+            throw new SqlException('User already exist', 500);
+        }
+
+        try {
+            DB::beginTransaction();
+            $fields['id'] = Str::uuid();
+            $fields['password'] = Hash::make($fields['password']);
+            $user = $selectedProvider->create($fields);
+            DB::commit();
+            return $user;
+        } catch (Exception $e) {
+            DB::rollback();
+            throw new Exception('Error on SQL Transaction', 500);
+        }
+    }
+
+    public function login(array $fields, string $provider): array
     {
 
         $selectedProvider = $this->getProvider($provider);
@@ -26,12 +55,16 @@ class AuthRepository
         if (!Hash::check($fields['password'], $model->password)) {
             throw new AuthorizationException('Wrong credentials', 401);
         }
+        // dd(Auth::guard($provider)->attempt(['email' => $fields['email'], 'password' => $fields['password']]));
+        // if (Auth::attempt(['email' => $fields['email'], 'password' => $fields['password']]))
 
-        $token = $model->createToken($provider);
+        $token = $model->createToken($model->email);
+        // if (auth()->guard($provider)->attempt(['email' => $fields['email'], 'password' => $fields['password']])) {
+        // };
 
         return [
             'access_token' => $token->plainTextToken,
-            'provider' => $provider
+            'user' => $model
         ];
     }
 
@@ -42,7 +75,18 @@ class AuthRepository
         } else if ($provider == "professionals") {
             return new Professional();
         } else {
-            throw new InvalidDataProviderException('Provider Not found');
+            throw new InvalidDataProviderException('Provider Not Found', 422);
         }
+    }
+
+    public function isExistingUser($provider, $fields)
+    {
+
+        $model = $provider->where('email', $fields['email'])->first();
+        if ($model) return true;
+        $model = $provider->where('document_id', $fields['document_id'])->first();
+        if ($model) return true;
+
+        return false;
     }
 }

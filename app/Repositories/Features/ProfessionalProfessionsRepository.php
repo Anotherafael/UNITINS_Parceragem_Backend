@@ -4,17 +4,25 @@
 namespace App\Repositories\Features;
 
 use Exception;
+use App\Traits\ApiResponser;
+use App\Exceptions\SqlException;
 use App\Models\Auth\Professional;
 use App\Models\Service\Profession;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Schema;
+use App\Exceptions\AddProfessionsDeniedException;
+use PHPUnit\Framework\InvalidDataProviderException;
 
 class ProfessionalProfessionsRepository
 {
-
+    use ApiResponser;
+    
     public function create(array $fields)
     {
+        dd($fields);
+        if (!$this->guardCanAddProfession()) {
+            throw new AddProfessionsDeniedException('User is not authorized to make transactions', 401);
+        }
 
         try {
             DB::beginTransaction();
@@ -27,9 +35,21 @@ class ProfessionalProfessionsRepository
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();
-            dd($e->getMessage());
-            return response()->json(['message' => 'SQL Transaction Error'], 500);
+            throw new Exception('Error on SQL transaction', 500);
         }
+    }
+
+    public function guardCanAddProfession() : bool {
+
+        dd(Auth::guard('users')->check());
+        if (Auth::guard('users')->check()) {
+            return false;
+        } else if (Auth::guard('professionals')->check()) {
+            return true;
+        } else {
+            throw new InvalidDataProviderException('Provider Not Found', 422);
+        }
+
     }
 
 }

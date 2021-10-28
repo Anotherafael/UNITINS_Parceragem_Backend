@@ -15,9 +15,9 @@ class CreateOrdersTable extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->date('date');
             $table->float('price');
             $table->integer('status')->default(1);
+            $table->date('date');
             $table->foreignUuid('task_id')->references('id')->on('tasks');
             $table->foreignUuid('professional_id')->references('id')->on('professionals');
             $table->timestamps();

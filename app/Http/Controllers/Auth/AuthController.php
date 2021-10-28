@@ -2,46 +2,96 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Exception;
+use App\Models\Auth\User;
 use App\Exceptions\Status;
-use Illuminate\Http\Request;
 
+use App\Traits\ApiResponser;
+use Illuminate\Http\Request;
+use App\Exceptions\SqlException;
 use App\Http\Controllers\Controller;
+use App\Providers\RouteServiceProvider;
+use Laravel\Sanctum\PersonalAccessToken;
 use App\Repositories\Auth\AuthRepository;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class AuthController extends Controller
 {
+    use ApiResponser;
 
     protected $repository;
+
+    protected $redirectTo = RouteServiceProvider::HOME;
 
     public function __construct(AuthRepository $repository)
     {
         $this->repository = $repository;
     }
 
-    public function postAuthenticate(Request $request, string $provider)
+    public function register(Request $request, string $provider)
     {
-        
+
         $validate = Validator::make($request->all(), [
+            'name' => 'required|string',
             'email' => 'required|email',
-            'password' => 'required'
+            'document_id' => 'required',
+            'phone' => 'required|numeric',
+            'password' => 'required|string'
         ]);
 
         if ($validate->fails()) {
-            return $this->sendError(Status::getStatusMessage(400), [], 400);
+            return $this->error('Error on validating', 400);
         }
 
         try {
-            $fields = $request->only(['email', 'password']);
-            $result = $this->repository->authenticate($provider, $fields);
-            return $this->sendResponse($result, "Authenticated with success");
-        } catch (InvalidDataProviderException $exception) {
-            return $this->sendError($exception->getMessage(), [], 422);
-        } catch (AuthorizationException $exception) {
-            return $this->sendError($exception->getMessage(), [], 401);
+            $user = $this->repository->register($request->all(), $provider);
+            return $this->success([
+                'user' => $user
+            ], "Registered with success");
+        } catch (InvalidDataProviderException $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        } catch (SqlException $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function login(Request $request, string $provider)
+    {
+
+        $validate = Validator::make($request->all(), [
+            'email' => 'required|string|email',
+            'password' => 'required|string'
+        ]);
+
+        if ($validate->fails()) {
+            return $this->error('Error on validating', 400);
         }
 
+        $credentials = $request->only(['email', 'password']);
+
+        try {
+            $data = $this->repository->login($credentials, $provider);
+            return $this->success($data, "Authenticated with success");
+        } catch (AuthorizationException $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        } catch (InvalidDataProviderException $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+
+    }
+
+    public function logout(Request $request)
+    {
+
+        $requestToken = $request->header('authorization');
+        $personalAccessToken = new PersonalAccessToken();
+        $token = $personalAccessToken->findToken(str_replace('Bearer', '', $requestToken));
+        $token->delete();
+
+        return $this->success([], 'Token revoked');
     }
 }

@@ -21,6 +21,7 @@ class CreateProfessionalsTable extends Migration
             $table->string('photo_path')->nullable();
             $table->string('document_id')->unique();
             $table->string('password');
+            $table->string('api_token')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

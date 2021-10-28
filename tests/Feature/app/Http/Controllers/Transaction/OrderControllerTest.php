@@ -14,13 +14,13 @@ class OrderControllerTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+        
     }
 
-    public function testUserShouldNotCreateAnOrder()
+    /** @test */
+    public function user_access_should_be_denied_at_creating_an_order()
     {
-        $code = 401;
         $this->refreshDatabase();
-        $this->artisan('passport:install');
 
         $service = Task::where('name', '=', 'Ansiedade')->first();
         $user = User::factory()->create();
@@ -33,21 +33,19 @@ class OrderControllerTest extends TestCase
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'users')->post(route('add_order'), $payload);
-        $response->assertStatus($code);
+        $response->assertStatus(401);
         $response->assertJson([
-            'status' => $code, 
-            'success' => false, 
-            'message' => 'Unauthorized'
+            'status' => 'Error', 
+            'message' => 'User is not allowed to create orders'
         ]);
     }
 
-    public function testProfessionalShouldCreateAnOrder()
+    /** @test */
+    public function professional_is_allowed_to_create_orders()
     {
-        $code = 200;
         $this->refreshDatabase();
-        $this->artisan('passport:install');
 
-        $service = Task::where('name', '=', 'Ansiedade')->first();
+        $service = Task::where('name', '=', 'Depressão')->first();
         $user = Professional::factory()->create();
         
         $payload = [
@@ -58,10 +56,9 @@ class OrderControllerTest extends TestCase
         
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'professionals')->post(route('add_order'), $payload);
-        $response->assertStatus($code);
+        $response->assertStatus(200);
         $response->assertJson([
-            'status' => $code, 
-            'success' => true, 
+            'status' => 'Success',
             'message' => 'Created with success'
         ]);
     }

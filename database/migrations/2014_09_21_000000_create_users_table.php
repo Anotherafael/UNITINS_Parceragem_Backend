@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('document_id')->unique();
             $table->string('password');
             $table->string('photo_path')->nullable();
+            $table->string('api_token')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

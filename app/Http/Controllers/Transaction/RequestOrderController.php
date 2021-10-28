@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Transaction;
 
 use Exception;
 use App\Exceptions\Status;
+use App\Exceptions\TransactionDeniedException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\Transaction\RequestOrderRepository;
+use App\Traits\ApiResponser;
 
 class RequestOrderController extends Controller
 {
+
+    use ApiResponser;
 
     protected $repository;
 
@@ -42,14 +46,14 @@ class RequestOrderController extends Controller
         ]);
 
         if ($validate->fails()) {
-            return $this->sendError(Status::getStatusMessage(400), [], 400);
+            return $this->error("Error on validating", 400);
         }
-
+        
         try {
             $this->repository->create($request->all());
-            return $this->sendResponse([], "Request sent");
-        } catch (Exception $e) {
-            $e->getMessage();
+            return $this->success([], "Request sent");
+        } catch (TransactionDeniedException $e) {
+            return $this->error($e->getMessage(), $e->getCode());
         }
     }
 

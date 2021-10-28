@@ -8,23 +8,17 @@ use App\Models\Auth\User;
 class ServiceControllerTest extends TestCase
 {
 
-    public function testCheckIfUserIsAuthenticate() {
-        $response = $this->get(route('get_sections'));
-        $response->assertStatus(302);
-        $response->assertRedirect('/api/v1/home');
-    }
-
-    public function testCheckIfCanGetSections()
+    /** @test */
+    public function check_if_can_get_sections()
     {
-        $code = 200;
+        $this->migrate();
         $user = User::factory()->create();
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
-        $response = $this->actingAs($user, 'professionals')->get(route('get_sections'));
-        $response->assertStatus($code);
+        $response = $this->actingAs($user, 'users')->get(route('get_sections'));
+        $response->assertStatus(200);
         $response->assertJson([
-            'status' => $code, 
-            'success' => true, 
+            'status' => 'Success',
             'message' => ''
         ]);
         $response->assertJsonStructure([
@@ -32,17 +26,17 @@ class ServiceControllerTest extends TestCase
         ]);
     }
 
-    public function testCheckIfCanGetProfessions()
+    /** @test */
+    public function check_if_can_get_professions()
     {
-        $code = 200;
+        $this->migrate();
         $user = User::factory()->create();
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'users')->get(route('get_professions'));
-        $response->assertStatus($code);
+        $response->assertStatus(200);
         $response->assertJson([
-            'status' => $code, 
-            'success' => true, 
+            'status' => 'Success',
             'message' => ''
         ]);
         $response->assertJsonStructure([
@@ -50,17 +44,17 @@ class ServiceControllerTest extends TestCase
         ]);
     }
 
-    public function testCheckIfCanGetTasks()
+    /** @test */
+    public function check_if_can_get_tasks()
     {
-        $code = 200;
+        $this->migrate();
         $user = User::factory()->create();
 
         /** @var \Illuminate\Contracts\Auth\Authenticatable $user */
         $response = $this->actingAs($user, 'users')->get(route('get_tasks'));
-        $response->assertStatus($code);
+        $response->assertStatus(200);
         $response->assertJson([
-            'status' => $code, 
-            'success' => true, 
+            'status' => 'Success',
             'message' => ''
         ]);
         $response->assertJsonStructure([

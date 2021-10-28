@@ -2,20 +2,20 @@
 
 namespace App\Http\Middleware;
 
+use Closure;
+use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
 {
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return string|null
-     */
-    protected function redirectTo($request)
+
+    public function handle($request, Closure $next, ...$guards)
     {
-        if (! $request->expectsJson()) {
-            return route('home');
-        }
+        $requestToken = $request->header('authorization');
+        $personalAccessToken = new PersonalAccessToken();
+        $token = $personalAccessToken->findToken(str_replace('Bearer', '', $requestToken));
+        if($token == null) return redirect('home');
+
+        return $next($request);
     }
 }

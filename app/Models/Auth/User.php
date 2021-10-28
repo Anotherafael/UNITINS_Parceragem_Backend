@@ -7,7 +7,6 @@ use App\Models\Transaction\Order;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Notifications\Notifiable;
-use App\Notifications\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -46,7 +45,6 @@ class User extends Authenticatable
      */
     public function sendPasswordResetNotification($token)
     {
-
         $url = 'https://localhost:8000/reset-password?token='.$token;
         Mail::to($this->email)->send(new ResetPasswordEmail($this, $url));
     }

@@ -14,101 +14,136 @@ class AuthControllerTest extends TestCase
         parent::setUp();
     }
 
-    public function testCheckIfInputsAreValid()
+    /** @test */
+    public function user_should_not_register_with_wrong_provider()
     {
-        $code = 400;
-
         $payload = [
-            'email' => 'hey',
+            'name' => 'Geogrio Galvani',
+            'email' => 'galvani@dev.br',
+            'document_id' => '12332112333',
+            'phone' => '12112344321',
             'password' => 'secret'
         ];
 
-        $response = $this->post(route('authenticate', ['provider' => 'users']), $payload);
-        $response->assertStatus($code);
+        $response = $this->post(route('register', ['provider' => 'wrong_provider']), $payload);
+        $response->assertStatus(422);
         $response->assertJson([
-            'status' => $code, 
-            'success' => false, 
-            'message' => 'Invalid inputs'
+            'status' => 'Error',  
+            'message' => 'Provider Not Found'
         ]);
     }
 
-    public function testUserShouldNotAuthenticateWithWrongProvider()
+    /** @test */
+    public function user_should_not_register_with_existing_user()
     {
-        $code = 422;
+        $user = User::factory()->create();
+        $payload = [
+            'name' => 'Geogrio Galvani',
+            'email' => $user->email,
+            'document_id' => '12332112333',
+            'phone' => '12112344321',
+            'password' => 'secret'
+        ];
+
+        $response = $this->post(route('register', ['provider' => 'users']), $payload);
+        $response->assertStatus(500);
+        $response->assertJson([
+            'status' => 'Error',  
+            'message' => 'User already exist'
+        ]);
+    }
+
+    /** @test */
+    public function user_can_register()
+    {
+        $this->refreshDatabase();
+        $payload = [
+            'name' => 'Geogrio Galvani',
+            'email' => 'galvani@dev.br',
+            'document_id' => '12332112333',
+            'phone' => '12112344321',
+            'password' => 'secret'
+        ];
+
+        $response = $this->post(route('register', ['provider' => 'users']), $payload);
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 'Success',  
+            'message' => 'Registered with success'
+        ]);
+        $response->assertJsonStructure([
+            'data' => [
+                'user',
+            ]
+        ]);
+    }
+
+    /** @test */
+    public function user_should_not_login_with_wrong_provider()
+    {
         $payload = [
             'email' => 'hey@you.dev',
             'password' => 'secret'
         ];
 
-        $response = $this->post(route('authenticate', ['provider' => 'wrong provider']), $payload);
-        $response->assertStatus($code);
+        $response = $this->post(route('login', ['provider' => 'wrong_provider']), $payload);
+        $response->assertStatus(422);
         $response->assertJson([
-            'status' => $code, 
-            'success' => false, 
-            'message' => 'Provider Not found'
+            'status' => 'Error',  
+            'message' => 'Provider Not Found'
         ]);
     }
     
-    public function testUserShouldBeDeniedIfNotRegistered()
+    /** @test */
+    public function user_access_should_be_denied_if_not_registered()
     {
-        $code = 401;
         $payload = [
             'email' => 'wrong@email.dev',
             'password' => 'secret'
         ];
 
-        $response = $this->post(route('authenticate', ['provider' => 'users']), $payload);
-        $response->assertStatus($code);
+        $response = $this->post(route('login', ['provider' => 'users']), $payload);
+        $response->assertStatus(401);
         $response->assertJson([
-            'status' => $code, 
-            'success' => false, 
+            'status' => 'Error', 
             'message' => 'Wrong credentials'
         ]);
     }
 
-    public function testUserShouldSendWrongPassword()
+    /** @test */
+    public function user_access_should_be_denied_if_send_wrong_password()
     {
-        $code = 401;
         $user = User::factory()->create();
         $payload = [
             'email' => $user->email,
             'password' => 'wrong_password'
         ];
 
-        $response = $this->post(route('authenticate', ['provider' => 'users']), $payload);
-        $response->assertStatus($code);
+        $response = $this->post(route('login', ['provider' => 'users']), $payload);
+        $response->assertStatus(401);
         $response->assertJson([
-            'status' => $code, 
-            'success' => false, 
+            'status' => 'Error', 
             'message' => 'Wrong credentials'
         ]);
 
     }
 
-    public function testUserCanAuthenticate()
+    /** @test */
+    public function user_can_login()
     {
-        $code = 200;
-        $this->artisan('passport:install');
         $user = Professional::factory()->create();
-
         $payload = [
             'email' => $user->email,
             'password' => 'secret'
         ];
 
-        $response = $this->post(route('authenticate', ['provider' => 'professionals']), $payload);
-        $response->assertStatus($code);
+        $response = $this->post(route('login', ['provider' => 'professionals']), $payload);
+        $response->assertStatus(200);
         $response->assertJson([
-            'status' => $code, 
-            'success' => true, 
+            'status' => 'Success', 
             'message' => 'Authenticated with success',
         ]);
-        $response->assertJsonStructure([
-            'data' => [
-                'access_token', 
-                'provider'
-            ],
-        ]);
+        $response->assertJsonStructure(['data']);
     }
     
 }

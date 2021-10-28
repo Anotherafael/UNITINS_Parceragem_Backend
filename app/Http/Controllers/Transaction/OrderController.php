@@ -3,16 +3,22 @@
 namespace App\Http\Controllers\Transaction;
 
 use App\Exceptions\Status;
+use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
-use App\Exceptions\OrderException;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Validator;
+use App\Exceptions\TransactionDeniedException;
 use App\Repositories\Transaction\OrderRepository;
+use App\Traits\ApiToken;
+use App\Traits\TokenConverter;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class OrderController extends Controller
 {
+
+    use ApiResponser, ApiToken;
 
     protected $repository;
 
@@ -39,6 +45,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+
         $validate = Validator::make($request->all(), [
             'task_id' => 'required',
             'price' => 'required',
@@ -46,16 +53,19 @@ class OrderController extends Controller
         ]);
 
         if ($validate->fails()) {
-            return $this->sendError(Status::getStatusMessage(400), [], 400);
+            return $this->error("Error on validating", 400);
         }
 
+        $inputs = $request->all();
+        $token = $this->findToken($request);
+
         try {
-            $this->repository->create($request->all());
-            return $this->sendResponse([], "Created with success");
-        } catch (OrderException $exception) {
-            return $this->sendError($exception->getMessage(), [], 401);
-        } catch (InvalidDataProviderException $exception) {
-            return $this->sendError($exception->getMessage(), [], 422);
+            $this->repository->create($inputs, $token);
+            return $this->success([], "Created with success");
+        } catch (TransactionDeniedException $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        } catch (InvalidDataProviderException $e) {
+            return $this->error($e->getMessage(), $e->getCode());
         }
 
 

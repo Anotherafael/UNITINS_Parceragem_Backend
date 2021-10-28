@@ -10,7 +10,7 @@ abstract class TestCase extends BaseTestCase
     use CreatesApplication;
 
 
-    protected function refreshDatabaseOnlyMigrate() {
+    protected function migrate() {
         return $this->artisan('migrate --seed');
     }
 
@@ -18,9 +18,4 @@ abstract class TestCase extends BaseTestCase
         return $this->artisan('migrate:fresh --seed');
     }
 
-    // protected function createToken($provider) {
-    //     $user = User::factory()->create();
-    //     $token = $user->createToken($provider);
-    //     return ['Authorization' => 'Bearer'.$token->plainTextToken];
-    // }
 }

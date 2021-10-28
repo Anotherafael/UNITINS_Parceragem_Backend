@@ -6,21 +6,21 @@ use App\Exceptions\Status;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Traits\ApiResponser;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Dotenv\Exception\ValidationException;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Validator;
-use App\Repositories\Auth\NewPasswordRepository;
-use Illuminate\Validation\Rules\Password as RulesPassword;
 
 class NewPasswordController extends Controller
 {
+    use ApiResponser;
+
     protected $repository;
 
-    public function __construct(NewPasswordRepository $repository)
+    public function __construct()
     {
-        $this->repository = $repository;
+
     }
 
     public function forgotPassword(Request $request)
@@ -31,27 +31,27 @@ class NewPasswordController extends Controller
         ]);
 
         if ($validate->fails()) {
-            return $this->sendError(Status::getStatusMessage(400), [], 400);
+            return $this->error('Error on validating', 400);
         }
-
+        
         $status = Password::sendResetLink($request->only('email'));
-
+        
         if ($status == Password::RESET_LINK_SENT) {
-            return $this->sendResponse([], __($status));
+            return $this->success([], __($status));
         }
     }
-
+    
     public function reset(Request $request)
     {
-
+        
         $validate = Validator::make($request->all(), [
             'token' => 'required',
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
+        
         if ($validate->fails()) {
-            return $this->sendError(Status::getStatusMessage(400), [], 400);
+            return $this->error('Error on validating', 400);
         }
 
         $status = Password::reset(
@@ -68,7 +68,7 @@ class NewPasswordController extends Controller
         );
 
         if ($status == Password::PASSWORD_RESET) {
-            return $this->sendResponse([], "Password reset successfully");
+            return $this->success([], "Password reset successfully");
         }
     }
 }

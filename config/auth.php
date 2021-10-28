@@ -36,14 +36,6 @@ return [
     */
 
     'guards' => [
-        'users' => [
-            'driver' => 'passport',
-            'provider' => 'users',
-        ],
-        'professionals' => [
-            'driver' => 'passport',
-            'provider' => 'professionals',
-        ],
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
@@ -68,6 +60,7 @@ return [
     */
 
     'providers' => [
+        
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\Auth\User::class,
@@ -75,8 +68,9 @@ return [
 
         'professionals' => [
             'driver' => 'eloquent',
-            'table' => App\Models\Auth\Professional::class,
+            'model' => App\Models\Auth\Professional::class,
         ],
+
     ],
 
     /*
@@ -97,6 +91,12 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'professionals' => [
+            'provider' => 'professionals',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

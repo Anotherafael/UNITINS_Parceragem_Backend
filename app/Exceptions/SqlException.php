@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class OrderException extends Exception
+class SqlException extends Exception
 {
-    
+    //
 }
