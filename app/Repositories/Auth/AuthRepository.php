@@ -55,12 +55,8 @@ class AuthRepository
         if (!Hash::check($fields['password'], $model->password)) {
             throw new AuthorizationException('Wrong credentials', 401);
         }
-        // dd(Auth::guard($provider)->attempt(['email' => $fields['email'], 'password' => $fields['password']]));
-        // if (Auth::attempt(['email' => $fields['email'], 'password' => $fields['password']]))
-
+        
         $token = $model->createToken($model->email);
-        // if (auth()->guard($provider)->attempt(['email' => $fields['email'], 'password' => $fields['password']])) {
-        // };
 
         return [
             'access_token' => $token->plainTextToken,
