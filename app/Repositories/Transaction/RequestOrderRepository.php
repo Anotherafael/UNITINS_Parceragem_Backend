@@ -18,17 +18,18 @@ class RequestOrderRepository
 {
     use ApiResponser;
 
-    public function create(array $fields)
+    public function create(array $fields, $token)
     {
 
-        if(!$this->guardCanRequestAnOrder()) {
+        if(!$this->modelCanRequestAnOrder($token)) {
             throw new TransactionDeniedException('Professional is not allowed to request orders', 401);
         }
 
+        
         try {
             DB::beginTransaction();
             $order = Order::find($fields['order_id'])->first();
-            $user = User::find(Auth::user()->id)->first();
+            $user = User::find($token->tokenable_id)->first();
             $user->orders()->attach($order);
             DB::commit();
         } catch (Exception $e) {
@@ -37,11 +38,11 @@ class RequestOrderRepository
         }
     }
 
-    public function guardCanRequestAnOrder() {
+    public function modelCanRequestAnOrder($token) {
 
-        if (Auth::guard('users')->check()) {
+        if ($token->tokenable_type == 'App\Models\Auth\User') {
             return true;
-        } else if (Auth::guard('professionals')->check()) {
+        } else if ($token->tokenable_type == 'App\Models\Auth\Professional') {
             return false;
         } else {
             throw new InvalidDataProviderException('Provider Not Found', 422);

@@ -10,11 +10,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\Transaction\RequestOrderRepository;
 use App\Traits\ApiResponser;
+use App\Traits\ApiToken;
 
 class RequestOrderController extends Controller
 {
 
-    use ApiResponser;
+    use ApiResponser, ApiToken;
 
     protected $repository;
 
@@ -49,8 +50,11 @@ class RequestOrderController extends Controller
             return $this->error("Error on validating", 400);
         }
         
+        $inputs = $request->all();
+        $token = $this->findToken($request);
+
         try {
-            $this->repository->create($request->all());
+            $this->repository->create($inputs, $token);
             return $this->success([], "Request sent");
         } catch (TransactionDeniedException $e) {
             return $this->error($e->getMessage(), $e->getCode());

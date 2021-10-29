@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers\Transaction;
 
+use App\Traits\ApiToken;
 use App\Exceptions\Status;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
+use App\Traits\TokenConverter;
+use App\Models\Transaction\Order;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Validator;
 use App\Exceptions\TransactionDeniedException;
 use App\Repositories\Transaction\OrderRepository;
-use App\Traits\ApiToken;
-use App\Traits\TokenConverter;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class OrderController extends Controller
@@ -34,7 +35,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::select("orders.*")->get();
+        return $this->success($orders);
     }
 
     /**

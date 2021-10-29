@@ -33,8 +33,8 @@ Route::group(['prefix' => 'v1'], function () {
         });
         
         Route::prefix('transaction')->group(function () {
-            Route::post('request-order', ['as' => 'request_order', 'uses' => 'Transaction\RequestOrderController@store']);
-            Route::post('addorder', ['as' => 'add_order', 'uses' => 'Transaction\OrderController@store']);
+            Route::apiResource('request-order', 'Transaction\RequestOrderController')->except('create', 'edit');
+            Route::apiResource('order', 'Transaction\OrderController')->except('create', 'edit');
         });
     
         Route::prefix('features')->group(function () {
