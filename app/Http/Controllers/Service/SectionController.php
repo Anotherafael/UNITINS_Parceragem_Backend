@@ -9,15 +9,16 @@ use App\Http\Controllers\Controller;
 class SectionController extends Controller
 {
     use ApiResponser;
-
-    public function __construct()
-    {
-    }
     
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        $data = Section::select("sections.*")->orderBy('sections.name')->get();
-        return $this->success($data);
+        $professions = Section::select("sections.*")->orderBy('sections.name')->get();
+        return $this->success($professions);
     }
 
 }
