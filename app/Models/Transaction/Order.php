@@ -33,7 +33,7 @@ class Order extends Model
 
     public function orderRequests()
     {
-        return $this->hasMany(Order::class, 'order_requests', 'order_id', 'user_id')->withTimestamps();
+        return $this->belongsToMany(User::class, 'order_requests', 'order_id', 'user_id')->withTimestamps();
     }
 
     public function professional()

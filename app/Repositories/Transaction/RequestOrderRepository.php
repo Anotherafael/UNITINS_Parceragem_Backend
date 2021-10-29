@@ -39,6 +39,28 @@ class RequestOrderRepository
         return $request;
     }
 
+    public function getMyRequestsByProfessional($token)
+    {
+        if ($this->modelCanRequestAnOrder($token)) {
+            throw new TransactionDeniedException('User is not allowed to has orders', 401);
+        }
+
+        $user = Professional::find($token->tokenable_id);
+
+        try {
+            $request = RequestOrder::select('order_requests.*')
+            ->with('user', 'order', 'order.task', 'order.professional') 
+            ->whereHas('order.professional', function ($q) use ($user) {
+                $q->where('professional_id', '=', $user->id);
+            })
+            ->get();
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
+        
+        return $request;
+    }
+
     public function create(array $fields, $token)
     {
 
@@ -46,12 +68,12 @@ class RequestOrderRepository
             throw new TransactionDeniedException('Professional is not allowed to request orders', 401);
         }
 
-
         try {
             DB::beginTransaction();
             $order = Order::find($fields['order_id']);
             $user = User::find($token->tokenable_id);
             $user->orders()->attach($order);
+            
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();

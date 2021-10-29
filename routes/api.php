@@ -39,7 +39,8 @@ Route::group(['prefix' => 'v1'], function () {
             Route::apiResource('request-order', 'Transaction\RequestOrderController')->except('create', 'edit');
             Route::apiResource('order', 'Transaction\OrderController')->except('create', 'edit');
             Route::get('myorders', ['as' => 'get_myorders', 'uses' => 'Transaction\OrderController@getMyOrders']);
-            Route::get('myrequests', ['as' => 'get_myrequests', 'uses' => 'Transaction\RequestOrderController@getMyRequestsByUser']);
+            Route::get('myrequests/users', ['as' => 'get_myrequests_user', 'uses' => 'Transaction\RequestOrderController@getMyRequestsByUser']);
+            Route::get('myrequests/professionals', ['as' => 'get_myrequests_professional', 'uses' => 'Transaction\RequestOrderController@getMyRequestsByProfessional']);
         });
     
         Route::prefix('features')->group(function () {

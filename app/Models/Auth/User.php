@@ -35,7 +35,7 @@ class User extends Authenticatable
 
     public function orders()
     {
-        return $this->hasMany(Order::class, 'order_requests', 'user_id', 'order_id')->withTimestamps();
+        return $this->belongsToMany(Order::class, 'order_requests', 'user_id', 'order_id')->withTimestamps();
     }
 
     /**

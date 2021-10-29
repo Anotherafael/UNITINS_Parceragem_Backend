@@ -41,6 +41,18 @@ class RequestOrderController extends Controller
         }
     }
 
+    public function getMyRequestsByProfessional(Request $request)
+    {
+        $token = $this->findToken($request);
+
+        try {
+            $requests = $this->repository->getMyRequestsByProfessional($token);
+            return $this->success($requests);
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      *
