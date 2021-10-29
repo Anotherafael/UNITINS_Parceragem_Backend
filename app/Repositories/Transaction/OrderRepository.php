@@ -16,6 +16,28 @@ use PHPUnit\Framework\InvalidDataProviderException;
 class OrderRepository
 {
 
+    public function getMyOrders($token)
+    {
+
+        if(!$this->modelHasOrders($token)) {
+            throw new TransactionDeniedException('User does not have orders', 401);
+        }
+
+        $user = Professional::find($token->tokenable->id);
+        
+        try {
+            $orders = Order::select('orders.*')
+            ->with('professional', 'task')
+            ->where('orders.professional_id', '=', $user->id)
+            ->get();
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
+        
+        return $orders;
+
+    }
+
     public function create(array $fields, $token)
     {
 
@@ -35,6 +57,17 @@ class OrderRepository
             DB::rollback();
             dd($e->getMessage());
             return response()->json(['message' => 'SQL Transaction Error'], 500);
+        }
+    }
+
+    public function modelHasOrders($token): bool 
+    {
+        if ($token->tokenable_type == 'App\Models\Auth\User') {
+            return false;
+        } else if ($token->tokenable_type == 'App\Models\Auth\Professional') {
+            return true;
+        } else {
+            throw new InvalidDataProviderException('Provider Not Found', 422);
         }
     }
 

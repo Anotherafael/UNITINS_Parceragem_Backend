@@ -14,6 +14,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Validator;
 use App\Exceptions\TransactionDeniedException;
 use App\Repositories\Transaction\OrderRepository;
+use Exception;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class OrderController extends Controller
@@ -28,15 +29,17 @@ class OrderController extends Controller
         $this->repository = $repository;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function getMyOrders(Request $request)
     {
-        $orders = Order::select("orders.*")->get();
-        return $this->success($orders);
+        $token = $this->findToken($request);
+
+        try {
+            $orders = $this->repository->getMyOrders($token);
+            return $this->success($orders);
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+
     }
 
     /**
@@ -69,19 +72,6 @@ class OrderController extends Controller
         } catch (InvalidDataProviderException $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
-
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**

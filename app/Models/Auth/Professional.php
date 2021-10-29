@@ -3,8 +3,9 @@
 namespace App\Models\Auth;
 
 use App\Mail\ResetPasswordEmail;
-use App\Models\Service\Profession;
+use App\Models\Transaction\Order;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Service\Profession;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,8 +24,8 @@ class Professional extends Authenticatable
         'name',
         'phone',
         'email',
-        'document_id',        
-        'password',      
+        'document_id',
+        'password',
     ];
 
     protected $hidden = [
@@ -37,6 +38,11 @@ class Professional extends Authenticatable
         return $this->belongsToMany(Profession::class, 'professional_professions', 'professional_id', 'profession_id')->withTimestamps();
     }
 
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
     /**
      * Send a password reset notification to the user.
      *
@@ -45,7 +51,7 @@ class Professional extends Authenticatable
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = 'https://localhost:8000/reset-password?token='.$token;
+        $url = 'https://localhost:8000/reset-password?token=' . $token;
         Mail::to($this->email)->send(new ResetPasswordEmail($this, $url));
     }
 }

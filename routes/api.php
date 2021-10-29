@@ -25,6 +25,7 @@ Route::group(['prefix' => 'v1'], function () {
     Route::middleware(['auth:api'])->group(function () {
 
         Route::post('auth/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@logout']);
+
         Route::get('me', ['as' => 'get_me', 'uses' => 'Auth\MeController@index']);
         Route::put('me/update', ['as' => 'update_me', 'uses' => 'Auth\MeController@update']);
         
@@ -37,6 +38,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::prefix('transaction')->group(function () {
             Route::apiResource('request-order', 'Transaction\RequestOrderController')->except('create', 'edit');
             Route::apiResource('order', 'Transaction\OrderController')->except('create', 'edit');
+            Route::get('myorders', ['as' => 'get_myorders', 'uses' => 'Transaction\OrderController@getMyOrders']);
         });
     
         Route::prefix('features')->group(function () {

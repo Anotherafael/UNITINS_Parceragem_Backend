@@ -2,6 +2,7 @@
 
 namespace App\Models\Service;
 
+use App\Models\Transaction\Order;
 use App\Models\Service\Profession;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,5 +24,10 @@ class Task extends Model
     public function profession()
     {
         return $this->hasOne(Profession::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }
