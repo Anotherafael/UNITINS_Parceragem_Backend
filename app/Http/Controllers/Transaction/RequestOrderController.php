@@ -29,9 +29,16 @@ class RequestOrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getMyRequestsByUser(Request $request)
     {
-        //
+        $token = $this->findToken($request);
+
+        try {
+            $requests = $this->repository->getMyRequestsByUser($token);
+            return $this->success($requests);
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     /**

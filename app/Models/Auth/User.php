@@ -26,15 +26,16 @@ class User extends Authenticatable
         'document_id',
         'password',
     ];
-
+    
     protected $hidden = [
         'password',
         'remember_token',
+        'api_token',
     ];
 
     public function orders()
     {
-        return $this->belongsToMany(Order::class, 'order_requests', 'user_id', 'order_id')->withTimestamps();
+        return $this->hasMany(Order::class, 'order_requests', 'user_id', 'order_id')->withTimestamps();
     }
 
     /**

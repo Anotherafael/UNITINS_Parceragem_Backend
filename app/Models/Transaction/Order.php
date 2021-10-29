@@ -31,6 +31,11 @@ class Order extends Model
         return $this->belongsTo(Task::class, 'task_id');
     }
 
+    public function orderRequests()
+    {
+        return $this->hasMany(Order::class, 'order_requests', 'order_id', 'user_id')->withTimestamps();
+    }
+
     public function professional()
     {
         return $this->belongsTo(Professional::class, 'professional_id');
