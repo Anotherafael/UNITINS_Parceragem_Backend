@@ -52,7 +52,7 @@ class Professional extends Authenticatable
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = 'https://localhost:8000/reset-password?token=' . $token;
+        $url = 'http://localhost:8000/api/v1/reset-password?email='.$this->email.'&token=' . $token;
         Mail::to($this->email)->send(new ResetPasswordEmail($this, $url));
     }
 }

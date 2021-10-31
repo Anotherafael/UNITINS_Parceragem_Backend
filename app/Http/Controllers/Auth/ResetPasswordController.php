@@ -2,54 +2,30 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Exceptions\Status;
+use App\Traits\ApiToken;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Traits\ApiResponser;
+use Illuminate\Http\Request;
+use App\Models\Auth\Professional;
+use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Validator;
 
-class NewPasswordController extends Controller
+class ResetPasswordController extends Controller
 {
-    use ApiResponser;
+    use ApiResponser, ApiToken;
 
-    protected $repository;
-
-    public function __construct()
+    public function resetPassword(Request $request)
     {
-
-    }
-
-    public function forgotPassword(Request $request)
-    {
-
-        $validate = Validator::make($request->all(), [
-            'email' => 'required|email',
-        ]);
-
-        if ($validate->fails()) {
-            return $this->error('Error on validating', 400);
-        }
-        
-        $status = Password::sendResetLink($request->only('email'));
-        
-        if ($status == Password::RESET_LINK_SENT) {
-            return $this->success([], __($status));
-        }
-    }
-    
-    public function reset(Request $request)
-    {
-        
         $validate = Validator::make($request->all(), [
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required|min:8',
         ]);
-        
+
         if ($validate->fails()) {
             return $this->error('Error on validating', 400);
         }

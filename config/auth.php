@@ -40,6 +40,10 @@ return [
             'driver' => 'token',
             'provider' => 'users',
         ],
+        'professionals' => [
+            'driver' => 'token',
+            'provider' => 'professionals',
+        ],
     ],
 
     /*

@@ -8,6 +8,7 @@ trait ApiToken
 {
 
 	use ApiResponser;
+
 	protected function findToken($request)
 	{
         $requestToken = $request->header('authorization');
@@ -16,6 +17,4 @@ trait ApiToken
 
 		return $token;
 	}
-
-
 }
