@@ -4,24 +4,19 @@
 namespace App\Repositories\Transaction;
 
 use Exception;
-use App\Models\Auth\User;
-use Illuminate\Support\Str;
-use App\Models\Auth\Professional;
 use App\Models\Transaction\Order;
-use App\Exceptions\OrderException;
 use App\Exceptions\TransactionDeniedException;
 use App\Models\Transaction\RequestOrder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class StatusRepository
 {
     
-    public function handleAccept(array $fields)
+    public function handleAccept($token, $field)
     {
 
-        if(!$this->guardCanAcceptOrRejectAnOrder()) {
+        if(!$this->modelCanAcceptOrRejectAnOrder($token)) {
             throw new TransactionDeniedException('User is not allowed to accept/reject orders', 401);
         }
 
@@ -29,7 +24,7 @@ class StatusRepository
             DB::beginTransaction();
 
             // Status on RequestOrder model is gonna be Accepted
-            $request_order = $this->getRequestOrder($fields['request_order_id']);
+            $request_order = $this->getRequestOrder($field);
             $request_order->status = 2;
             $request_order->save();
             
@@ -55,10 +50,10 @@ class StatusRepository
         }
     }
 
-    public function handleReject(array $fields)
+    public function handleReject($token, $field)
     {
 
-        if(!$this->guardCanAcceptOrRejectAnOrder()) {
+        if(!$this->modelCanAcceptOrRejectAnOrder($token)) {
             throw new TransactionDeniedException('User is not allowed to accept/reject orders', 401);
         }
 
@@ -66,7 +61,7 @@ class StatusRepository
             DB::beginTransaction();
 
             // Status on RequestOrder model is gonna be Rejected
-            $request_order = $this->getRequestOrder($fields['request_order_id']);
+            $request_order = $this->getRequestOrder($field);
             $request_order->status = 3;
             $request_order->save();
 
@@ -83,11 +78,10 @@ class StatusRepository
         return RequestOrder::find($id);
     }
 
-    public function guardCanAcceptOrRejectAnOrder() {
-
-        if (Auth::guard('users')->check()) {
+    public function modelCanAcceptOrRejectAnOrder($token) {
+        if ($token->tokenable_type == 'App\Models\Auth\User') {
             return false;
-        } else if (Auth::guard('professionals')->check()) {
+        } else if ($token->tokenable_type == 'App\Models\Auth\Professional') {
             return true;
         } else {
             throw new InvalidDataProviderException('Provider Not Found', 422);

@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Transaction;
 
 use Exception;
-use App\Exceptions\Status;
 use App\Exceptions\TransactionDeniedException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\Transaction\StatusRepository;
 use App\Traits\ApiResponser;
+use App\Traits\ApiToken;
 
 class StatusController extends Controller
 {
-    use ApiResponser;
+    use ApiResponser, ApiToken;
 
     protected $repository;
 
@@ -32,8 +32,11 @@ class StatusController extends Controller
             return $this->error("Error on validating", 400);
         }
         
+        $token = $this->findToken($request);
+        $inputs = $request->only('request_order_id');
+
         try {
-            $this->repository->handleAccept($request->all());
+            $this->repository->handleAccept($token, $inputs);
             return $this->success([], "Accepted");
         } catch (TransactionDeniedException $e) {
             return $this->error($e->getMessage(), $e->getCode());
@@ -52,8 +55,11 @@ class StatusController extends Controller
             return $this->error("Error on validating", 400);
         }
 
+        $token = $this->findToken($request);
+        $inputs = $request->only('request_order_id');
+
         try {
-            $this->repository->handleReject($request->all());
+            $this->repository->handleReject($token, $inputs);
             return $this->success([], "Rejected");
         } catch (TransactionDeniedException $e) {
             return $this->error($e->getMessage(), $e->getCode());
