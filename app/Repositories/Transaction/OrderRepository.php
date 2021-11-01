@@ -14,6 +14,7 @@ use App\Models\Service\Profession;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\TransactionDeniedException;
+use App\Models\Transaction\RequestOrder;
 use PHPUnit\Framework\InvalidDataProviderException;
 
 class OrderRepository
@@ -58,6 +59,37 @@ class OrderRepository
             $fields['id'] = Str::uuid();
             $fields['professional_id'] = $user->id;
             Order::create($fields);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            dd($e->getMessage());
+            return response()->json(['message' => 'SQL Transaction Error'], 500);
+        }
+    }
+
+    public function cancel($token, $id)
+    {
+
+        if (!$this->modelCanCreateOrder($token)) {
+            throw new TransactionDeniedException('User is not allowed to create orders', 401);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $order = Order::find($id);
+            $order->status = 3;
+            $order->save();
+            
+            $list_request = RequestOrder::where('order_id', '=', $order->id)
+            ->where('status', '!=', 4)
+            ->get();
+
+            foreach($list_request as $request) {
+                $request->status = 3;
+                $request->save();
+            }
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();

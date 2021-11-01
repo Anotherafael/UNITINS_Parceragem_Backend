@@ -40,7 +40,7 @@ class RequestOrder extends Model
         return [
             1 => 'Pendente',
             'Aceito',
-            'Rejeitado'
+            'Cancelado'
         ];
     }
 }

@@ -50,8 +50,9 @@ class Order extends Model
     {
         return [
             1 => 'Pendente',
-            'Encaminhado',
-            'Deletado'
+            'À realizar',
+            'Cancelado',
+            'Realizado'
         ];
     }
 }

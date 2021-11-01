@@ -39,12 +39,13 @@ class StatusRepository
             $order->save();
 
             // Others RequestOrder models is gonna be rejected. 'Cause the order is already accepted.
-            $list_request = RequestOrder::where('order_id', '=', $order->id)->where('status', '=', 1)->get();
-            
-            for($i = 0; $i < $list_request->count();$i++)
-            {
-                $list_request[$i]->status = 3;
-                $list_request[$i]->save();
+            $list_request = RequestOrder::where('order_id', '=', $order->id)
+            ->where('status', '=', 1)
+            ->get();
+
+            foreach($list_request as $request) {
+                $request->status = 3;
+                $request->save();
             }
 
             DB::commit();
