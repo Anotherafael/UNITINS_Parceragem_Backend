@@ -15,20 +15,18 @@ use PHPUnit\Framework\InvalidDataProviderException;
 
 class ProfessionalProfessionsRepository
 {
-    use ApiResponser;
     
-    public function create(array $fields)
+    public function create(array $fields, $token)
     {
-        dd($fields);
-        if (!$this->guardCanAddProfession()) {
+        if (!$this->modelCanAddProfession($token)) {
             throw new AddProfessionsDeniedException('User is not authorized to make transactions', 401);
         }
 
         try {
             DB::beginTransaction();
 
-            $user = Professional::find(Auth::user()->id)->first();
-            $profession = Profession::find($fields['profession_id'])->first();
+            $user = Professional::find($token->tokenable_id)->first();
+            $profession = Profession::find($fields)->first();
 
             $user->professions()->attach($profession);
 
@@ -39,12 +37,11 @@ class ProfessionalProfessionsRepository
         }
     }
 
-    public function guardCanAddProfession() : bool {
+    public function modelCanAddProfession($token) : bool {
 
-        dd(Auth::guard('users')->check());
-        if (Auth::guard('users')->check()) {
+        if ($token->tokenable_type == 'App\Models\Auth\User') {
             return false;
-        } else if (Auth::guard('professionals')->check()) {
+        } else if ($token->tokenable_type == 'App\Models\Auth\Professional') {
             return true;
         } else {
             throw new InvalidDataProviderException('Provider Not Found', 422);

@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Exceptions\AddProfessionsDeniedException;
 use App\Repositories\Features\ProfessionalProfessionsRepository;
+use App\Traits\ApiToken;
+use PHPUnit\Framework\InvalidDataProviderException;
 
 class ProfessionalProfessionsController extends Controller
 {
-    use ApiResponser;
+    use ApiResponser, ApiToken;
 
     protected $repository;
 
@@ -34,12 +36,17 @@ class ProfessionalProfessionsController extends Controller
             return $this->error('Error on validating', 400);
         }
 
+        $token = $this->findToken($request);
+        $inputs = $request->only('profession_id');
+
         try {
-            $this->repository->create($request->all());
+            $this->repository->create($inputs, $token);
             return $this->success([], "Profession added with success");
-        } catch (Exception $e) {
+        } catch (InvalidDataProviderException $e) {
             return $this->error($e->getMessage(), $e->getCode());
         } catch (AddProfessionsDeniedException $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        } catch (Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
     }

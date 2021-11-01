@@ -44,7 +44,7 @@ Route::group(['prefix' => 'v1'], function () {
         });
 
         Route::prefix('features')->group(function () {
-            Route::post('add-professions', ['as' => 'add_professions', 'uses' => 'Features\ProfessionalProfessionsController@addProfession']);
+            Route::post('add-profession', ['as' => 'add_profession', 'uses' => 'Features\ProfessionalProfessionsController@addProfession']);
         });
 
         Route::group(['prefix' => 'order'], function () {
