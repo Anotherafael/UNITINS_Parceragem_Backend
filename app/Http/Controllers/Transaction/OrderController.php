@@ -32,14 +32,23 @@ class OrderController extends Controller
     public function getMyOrders(Request $request)
     {
         $token = $this->findToken($request);
-
+        
         try {
             $orders = $this->repository->getMyOrders($token);
             return $this->success($orders);
         } catch (Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
+        
+    }
+    
+    public function getPendingOrders() {
 
+        $orders = Order::select('orders.*')
+        ->where('status', '=', 1)
+        ->get();
+        
+        return $this->success($orders);
     }
 
     /**
