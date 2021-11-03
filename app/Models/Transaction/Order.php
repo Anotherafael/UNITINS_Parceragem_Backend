@@ -20,6 +20,7 @@ class Order extends Model
     protected $fillable = [
         'id',
         'date',
+        'hour',
         'price',
         'task_id',
         'professional_id',

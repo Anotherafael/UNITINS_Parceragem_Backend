@@ -14,6 +14,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Validator;
 use App\Exceptions\TransactionDeniedException;
 use App\Repositories\Transaction\OrderRepository;
+use Carbon\Carbon;
 use Exception;
 use PHPUnit\Framework\InvalidDataProviderException;
 
@@ -61,15 +62,16 @@ class OrderController extends Controller
     {
 
         $validate = Validator::make($request->all(), [
-            'task_id' => 'required',
-            'price' => 'required',
-            'date' => 'required',
+            'task_id' => 'required|uuid',
+            'price' => 'required|numeric',
+            'date' => 'required|date',
+            'hour' => 'required',
         ]);
-
+        
         if ($validate->fails()) {
             return $this->error("Error on validating", 400);
         }
-
+        
         $inputs = $request->all();
         $token = $this->findToken($request);
 

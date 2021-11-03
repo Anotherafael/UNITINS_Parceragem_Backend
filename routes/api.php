@@ -15,11 +15,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1'], function () {
 
-    Route::get('home', ['as' => 'home', 'uses' => 'HomeController@index']);
     Route::post('auth/login/{provider}', ['as' => 'login', 'uses' => 'Auth\AuthController@login']);
     Route::post('auth/register/{provider}', ['as' => 'register', 'uses' => 'Auth\AuthController@register']);
-
-    Route::post('forgot-password', ['as' => 'forgot_password', 'uses' => 'Auth\ForgotPasswordController@forgotPassword']);
+    Route::post('forgot-password/{provider}', ['as' => 'forgot_password', 'uses' => 'Auth\ForgotPasswordController@forgotPassword']);
     Route::post('reset-password', ['as' => 'reset_password', 'uses' => 'Auth\ResetPasswordController@resetPassword']);
 
     Route::middleware(['auth:api'])->group(function () {
