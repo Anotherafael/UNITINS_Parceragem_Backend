@@ -25,7 +25,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::post('auth/logout', ['as' => 'logout', 'uses' => 'Auth\AuthController@logout']);
 
         Route::get('me', ['as' => 'get_me', 'uses' => 'Auth\MeController@index']);
-        Route::put('me/update', ['as' => 'update_me', 'uses' => 'Auth\MeController@update']);
+        Route::post('me/update', ['as' => 'update_me', 'uses' => 'Auth\MeController@update']);
 
         Route::prefix('service')->group(function () {
             Route::get('sections', ['as' => 'get_sections', 'uses' => 'Service\SectionController@index']);

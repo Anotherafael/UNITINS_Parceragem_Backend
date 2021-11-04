@@ -7,8 +7,9 @@ use Exception;
 use App\Models\Auth\User;
 use Illuminate\Support\Str;
 use App\Traits\ApiResponser;
-use App\Exceptions\SqlException;
+use Illuminate\Http\Request;
 
+use App\Exceptions\SqlException;
 use App\Models\Auth\Professional;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -21,23 +22,33 @@ class AuthRepository
 
     use ApiResponser;
 
-    public function register(array $fields, string $provider)
+    public function register(Request $request, string $provider)
     {
         $selectedProvider = $this->getProvider($provider);
-
+        $fields = $request->all(); 
+        
         if ($this->isExistingUser($selectedProvider, $fields)) {
             throw new SqlException('User already exist', 500);
         }
-
+        
         try {
             DB::beginTransaction();
+
+            if($request->hasFile('photo_path')) {
+                $imagePath = $request->photo->store('users');
+                $fields['photo_path'] = $imagePath;
+            }
+
             $fields['id'] = Str::uuid();
             $fields['password'] = Hash::make($fields['password']);
+            
             $user = $selectedProvider->create($fields);
+
             DB::commit();
             return $user;
         } catch (Exception $e) {
             DB::rollback();
+            dd($e->getMessage());
             throw new Exception('Error on SQL Transaction', 500);
         }
     }

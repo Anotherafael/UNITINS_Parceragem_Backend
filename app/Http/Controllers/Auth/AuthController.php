@@ -38,7 +38,8 @@ class AuthController extends Controller
             'email' => 'required|email',
             'document_id' => 'required',
             'phone' => 'required|numeric',
-            'password' => 'required|string'
+            'password' => 'required|string',
+            'photo_path' => 'image'
         ]);
 
         if ($validate->fails()) {
@@ -46,7 +47,7 @@ class AuthController extends Controller
         }
 
         try {
-            $user = $this->repository->register($request->all(), $provider);
+            $user = $this->repository->register($request, $provider);
             return $this->success([
                 'user' => $user
             ], "Registered with success");

@@ -3,14 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Traits\ApiToken;
-use App\Models\Auth\User;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
-use App\Models\Auth\Professional;
 use App\Http\Controllers\Controller;
 use App\Repositories\Auth\MeRepository;
 use Exception;
-use Laravel\Sanctum\PersonalAccessToken;
 use Illuminate\Support\Facades\Validator;
 use PHPUnit\Framework\InvalidDataProviderException;
 
@@ -56,18 +53,17 @@ class MeController extends Controller
         $validate = Validator::make($request->all(), [
             'name' => 'string',
             'phone' => 'string',
-            'photo_path' => 'string',
+            'photo_path' => 'image',
         ]);
 
         if ($validate->fails()) {
             return $this->error("Error on validating", 400);
         }
-
-        $inputs = $request->only('name', 'phone', 'photo_path');
+        
         $token = $this->findToken($request);
 
         try {
-            $this->repository->updateMe($inputs, $token);
+            $this->repository->updateMe($request, $token);
             return $this->success([], "Updated with success");
         } catch (InvalidDataProviderException $e) {
             return $this->error($e->getMessage(), $e->getCode());

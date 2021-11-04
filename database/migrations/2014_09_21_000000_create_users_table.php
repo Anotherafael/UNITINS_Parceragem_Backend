@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('document_id')->unique();
             $table->string('password');
-            $table->string('photo_path')->nullable();
+            $table->string('photo_path');
             $table->string('api_token')->nullable();
             $table->rememberToken();
             $table->timestamps();
