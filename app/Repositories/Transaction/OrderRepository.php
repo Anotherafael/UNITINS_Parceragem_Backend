@@ -51,6 +51,11 @@ class OrderRepository
         if (!$this->modelHasProfession($fields['task_id'], $token)) {
             throw new TransactionDeniedException('You are not allowed to work this task', 401);
         }
+        
+        if(!$this->dateAreValid($fields['date'])){
+            throw new TransactionDeniedException('The date should be at least two days after today', 401);
+        }
+
 
         try {
             DB::beginTransaction();
@@ -137,5 +142,13 @@ class OrderRepository
         } else {
             throw new InvalidDataProviderException('Provider Not Found', 422);
         }
+    }
+
+    public function dateAreValid($date) : bool{
+        $date = Carbon::parse($date);
+        if($date < Carbon::now()->addDays(2)) {
+            return false;
+        }
+        return true;
     }
 }
