@@ -35,7 +35,10 @@ class AuthRepository
             DB::beginTransaction();
 
             if($request->hasFile('photo_path')) {
-                $imagePath = $request->photo->store('users');
+                $ext = $request->file('photo_path')->getClientOriginalExtension();
+                $fileName = Str::random(10).".".$ext;
+
+                $imagePath = $request->photo->storeAs('users/images', $fileName);
                 $fields['photo_path'] = $imagePath;
             }
 

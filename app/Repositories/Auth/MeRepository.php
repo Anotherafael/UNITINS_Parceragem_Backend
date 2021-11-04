@@ -5,6 +5,7 @@ namespace App\Repositories\Auth;
 
 use Exception;
 use App\Models\Auth\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\Auth\Professional;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,7 @@ class MeRepository
         $model = $this->getProvider($token);
 
         $user = $model->where('id', '=', $token->tokenable_id)->first();
-        
+
         return $user;
     }
 
@@ -27,17 +28,20 @@ class MeRepository
     {
         $model = $this->getProvider($token);
         $fields = $request->only('name', 'phone', 'photo_path');
-        
+
         $user = $model->where('id', '=', $token->tokenable_id)->first();
-        
-        if($request->hasFile('photo_path')) {
-            if($user->photo_path && Storage::exists($user->photo_path)) {
+
+        if ($request->hasFile('photo_path')) {
+            if ($user->photo_path && Storage::exists($user->photo_path)) {
                 Storage::delete($user->photo_path);
             }
-            $imagePath = $fields['photo_path']->store('users');
+            $ext = $request->file('photo_path')->getClientOriginalExtension();
+            $fileName = Str::random(10) . "." . $ext;
+
+            $imagePath = $request->photo->storeAs('users/images', $fileName);
             $fields['photo_path'] = $imagePath;
         }
-        
+
         try {
             DB::beginTransaction();
             $user->fill($fields);
@@ -47,7 +51,6 @@ class MeRepository
             DB::rollback();
             throw new Exception('Error on SQL Transaction', 500);
         }
-        
     }
 
     public function getProvider($token)
