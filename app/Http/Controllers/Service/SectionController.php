@@ -17,7 +17,8 @@ class SectionController extends Controller
      */
     public function index()
     {
-        $professions = Section::select("sections.*")->orderBy('sections.name')->get();
+        $professions = Section::select("sections.*")
+        ->get();
         return $this->success($professions);
     }
 

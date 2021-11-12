@@ -15,9 +15,13 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = Task::select("tasks.*")->orderBy('tasks.name')->get();
+        $tasks = Task::select("tasks.*")
+        ->with('profession', 'profession.section')
+        ->where('tasks.profession_id', '=', $request->id)
+        ->orderBy('tasks.name')
+        ->get();
         return $this->success($tasks);
     }
 

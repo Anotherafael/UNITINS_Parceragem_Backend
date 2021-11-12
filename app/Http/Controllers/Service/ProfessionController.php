@@ -11,14 +11,14 @@ class ProfessionController extends Controller
 {
 
     use ApiResponser;
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+
+    public function index(Request $request)
     {
-        $professions = Profession::select("professions.*")->orderBy('professions.name')->get();
+        $professions = Profession::select("professions.*")
+        ->with('section')
+        ->where('professions.section_id', '=', $request->id)
+        ->orderBy('professions.name')
+        ->get();
         return $this->success($professions);
     }
 

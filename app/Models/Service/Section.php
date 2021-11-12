@@ -17,4 +17,9 @@ class Section extends Model
         'id',
         'name',    
     ];
+
+    public function section()
+    {
+        return $this->hasMany(Profession::class);
+    }
 }

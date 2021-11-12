@@ -44,10 +44,12 @@ class OrderController extends Controller
         
     }
     
-    public function getPendingOrders() {
+    public function getPendingOrders(Request $request) {
 
         $orders = Order::select('orders.*')
+        ->with('professional', 'task', 'task.profession', 'task.profession.section')
         ->where('status', '=', 1)
+        ->where('orders.task_id', '=', $request->id)
         ->get();
         
         return $this->success($orders);

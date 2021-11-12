@@ -23,7 +23,7 @@ class Task extends Model
 
     public function profession()
     {
-        return $this->belongsTo(Profession::class);
+        return $this->belongsTo(Profession::class, 'profession_id');
     }
 
     public function orders()
