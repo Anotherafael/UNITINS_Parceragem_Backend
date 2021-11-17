@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use App\Exceptions\SqlException;
 use App\Models\Auth\Professional;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Access\AuthorizationException;
 use PHPUnit\Framework\InvalidDataProviderException;
@@ -25,7 +24,7 @@ class AuthRepository
     public function register(Request $request, string $provider)
     {
         $selectedProvider = $this->getProvider($provider);
-        $fields = $request->all(); 
+        $fields = $request->all();
         
         if ($this->isExistingUser($selectedProvider, $fields)) {
             throw new SqlException('User already exist', 500);
@@ -38,7 +37,7 @@ class AuthRepository
                 $ext = $request->file('photo_path')->getClientOriginalExtension();
                 $fileName = Str::random(10).".".$ext;
 
-                $imagePath = $request->photo->storeAs('users/images', $fileName);
+                $imagePath = $request->photo_path->storeAs('users/images', $fileName);
                 $fields['photo_path'] = $imagePath;
             }
 

@@ -17,23 +17,30 @@ class ProfessionSeeder extends Seeder
     public function run()
     {
 
-        $section = Section::where('name', '=', 'Saúde')->first();
-
-        $professions = [
+        $this->fillSectionWithProfessions('Saúde', [
             'Psicólogo', 
             'Odontólogo',
-            'Otorrino' 
-        ];
+            'Otorrino',
+        ]);
+        $this->fillSectionWithProfessions('Educação', [
+            'Professor Particular', 
+            'Reforço Escolar',
+            'Revisor de Redação',
+        ]);
 
+        $this->command->info(("Professions created"));
+    }
 
-        foreach ($professions as $value) {
+    function fillSectionWithProfessions($section, array $array) {
+
+        $section = Section::where('name', '=', $section)->first();
+
+        foreach ($array as $value) {
             $profession = Profession::create([
                 'id' => Str::uuid(),
                 'name' => $value,
                 'section_id' => $section->id
             ]);
         }
-
-        $this->command->info(("Professions created"));
     }
 }

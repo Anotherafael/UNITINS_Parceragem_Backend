@@ -16,22 +16,50 @@ class TaskSeeder extends Seeder
      */
     public function run()
     {
-        $profession = Profession::where('name', '=', 'Psícólogo')->first();
-
-        $services = [
-            'Ansiedade', 
+        $this->fillProfessionWithTasks('Psicólogo', [
+            'Ansiedade',
             'Depressão', 
             'Terapia', 
-        ];
+        ]);
+        $this->fillProfessionWithTasks('Otorrino', [
+            'Consulta',
+            'Rinoplastia', 
+            'Otoplastia', 
+        ]);
+        $this->fillProfessionWithTasks('Odontólogo', [
+            'Consulta',
+            'Limpeza', 
+            'Extração de sisos', 
+        ]);
+        $this->fillProfessionWithTasks('Professor Particular', [
+            'Matemática',
+            'Lingua Inglesa', 
+            'Biologia', 
+            'Física', 
+            'Química', 
+        ]);
+        $this->fillProfessionWithTasks('Reforço Escolar', [
+            'Ensino Fundamental I e II',
+            'Ensino Médio', 
+        ]);
+        $this->fillProfessionWithTasks('Revisor de Redação', [
+            'Revisão + Aula',
+            'Somente revisão', 
+        ]);
+        
+        $this->command->info(("Tasks created"));
+    }
+    
+    function fillProfessionWithTasks($profession, array $tasks) {
+        
+        $profession = Profession::where('name', '=', $profession)->first();
 
-        foreach ($services as $value) {
-            $service = Task::create([
+        foreach ($tasks as $value) {
+            $tasks = Task::create([
                 'id' => Str::uuid(),
                 'name' => $value,
                 'profession_id' => $profession->id
             ]);
         }
-
-        $this->command->info(("Services created"));
     }
 }

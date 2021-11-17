@@ -39,7 +39,7 @@ class AuthController extends Controller
             'document_id' => 'string|required|min:14',
             'phone' => 'required|numeric',
             'password' => 'required|string|min:6',
-            'photo_path' => 'image|mimes:jpg,jpeg,png',
+            'photo_path' => 'image',
         ]);
 
         if ($validate->fails()) {
