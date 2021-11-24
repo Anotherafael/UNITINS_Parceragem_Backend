@@ -67,13 +67,16 @@ class RequestOrderRepository
         if (!$this->modelCanRequestAnOrder($token)) {
             throw new TransactionDeniedException('Professional is not allowed to request orders', 401);
         }
-
+        
+        $order = Order::find($fields['order_id']);
+        $user = User::find($token->tokenable_id);
+        
+        if(!$this->userHasThisOrder($user, $order)) {
+            throw new TransactionDeniedException('User should not add more request to the same order', 401);
+        }
         try {
             DB::beginTransaction();
-            $order = Order::find($fields['order_id']);
-            $user = User::find($token->tokenable_id);
             $user->orders()->attach($order);
-            
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();
@@ -91,5 +94,18 @@ class RequestOrderRepository
         } else {
             throw new InvalidDataProviderException('Provider Not Found', 422);
         }
+    }
+
+    public function userHasThisOrder($user, $order) {
+        $request = RequestOrder::select('order_requests.*')
+            ->with('user', 'order') 
+            ->where('user_id', '=', $user->id)
+            ->where('order_id', '=', $order->id)
+            ->first();
+
+        if(!$request){
+            return true;
+        }
+        return false;
     }
 }
