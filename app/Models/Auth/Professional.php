@@ -34,6 +34,14 @@ class Professional extends Authenticatable
         'api_token',
     ];
 
+    public function getProfessionsAttribute() {
+        $professions = Profession::whereHas('professionals', function ($query) {
+            $query->where('professionals.id', '=', $this->id);
+        })
+        ->get();
+        return $professions;
+    }
+
     public function professions()
     {
         return $this->belongsToMany(Profession::class, 'professional_professions', 'professional_id', 'profession_id')->withTimestamps();

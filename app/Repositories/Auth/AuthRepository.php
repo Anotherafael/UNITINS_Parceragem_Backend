@@ -69,11 +69,15 @@ class AuthRepository
             throw new AuthorizationException('Wrong credentials', 401);
         }
         
+        if ($selectedProvider->getTable() == 'professionals'){
+            $model->append('professions')->toArray();
+        };
+        
         $token = $model->createToken($model->email);
-
+        
         return [
             'access_token' => $token->plainTextToken,
-            'user' => $model
+            'user' => $model,
         ];
     }
 
