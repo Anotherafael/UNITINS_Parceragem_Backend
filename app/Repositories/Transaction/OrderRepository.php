@@ -31,7 +31,7 @@ class OrderRepository
 
         try {
             $orders = Order::select('orders.*')
-                ->with('professional', 'task')
+                ->with('professional', 'task', 'task.profession', 'task.profession.section')
                 ->where('orders.professional_id', '=', $user->id)
                 ->get();
         } catch (Exception $e) {

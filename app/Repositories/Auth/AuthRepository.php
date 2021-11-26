@@ -26,8 +26,8 @@ class AuthRepository
         $selectedProvider = $this->getProvider($provider);
         $fields = $request->all();
         
-        if ($this->isExistingUser($selectedProvider, $fields)) {
-            throw new SqlException('User already exist', 500);
+        if ($this->isExistingUser($fields)) {
+            throw new SqlException('User already exist with email, cpf or phone number.', 500);
         }
         
         try {
@@ -92,12 +92,21 @@ class AuthRepository
         }
     }
 
-    public function isExistingUser($provider, $fields)
+    public function isExistingUser($fields)
     {
 
-        $model = $provider->where('email', $fields['email'])->first();
+        $model = User::where('email', $fields['email'])->first();
         if ($model) return true;
-        $model = $provider->where('document_id', $fields['document_id'])->first();
+        $model = User::where('document_id', $fields['document_id'])->first();
+        if ($model) return true;
+        $model = User::where('phone', $fields['phone'])->first();
+        if ($model) return true;
+        
+        $model = Professional::where('email', $fields['email'])->first();
+        if ($model) return true;
+        $model = Professional::where('document_id', $fields['document_id'])->first();
+        if ($model) return true;
+        $model = Professional::where('phone', $fields['phone'])->first();
         if ($model) return true;
 
         return false;
