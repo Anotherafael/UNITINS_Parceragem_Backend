@@ -30,9 +30,9 @@ class RequestOrder extends Model
         return $this->belongsTo(Order::class, 'order_id');
     }
 
-    public function getStatusNameAttribute()
+    public function getStatusAttribute($value)
     {
-        return $this->allStatus()[$this->status];
+        return $this->allStatus()[$value];
     }
 
     public static function allStatus()

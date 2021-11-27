@@ -42,9 +42,9 @@ class Order extends Model
         return $this->belongsTo(Professional::class, 'professional_id');
     }
 
-    public function getStatusNameAttribute()
+    public function getStatusAttribute($value)
     {
-        return $this->allStatus()[$this->status];
+        return $this->allStatus()[$value];
     }
 
     public static function allStatus()

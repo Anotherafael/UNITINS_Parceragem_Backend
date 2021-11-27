@@ -40,8 +40,8 @@ Route::group(['prefix' => 'v1'], function () {
             Route::get('pending-orders/{id}', ['as' => 'get_pending_orders', 'uses' => 'Transaction\OrderController@getPendingOrders']);
 
             Route::get('myorders', ['as' => 'get_myorders', 'uses' => 'Transaction\OrderController@getMyOrders']);
-            Route::get('user/myrequests', ['as' => 'user_get_myrequests', 'uses' => 'Transaction\RequestOrderController@getMyRequestsByUser']);
-            Route::get('professional/myrequests', ['as' => 'pro_get_myrequests', 'uses' => 'Transaction\RequestOrderController@getMyRequestsByProfessional']);
+            Route::get('myrequests/users', ['as' => 'user_get_myrequests', 'uses' => 'Transaction\RequestOrderController@getMyRequestsByUser']);
+            Route::get('myrequests/professionals', ['as' => 'pro_get_myrequests', 'uses' => 'Transaction\RequestOrderController@getMyRequestsByProfessional']);
         });
 
         Route::prefix('features')->group(function () {

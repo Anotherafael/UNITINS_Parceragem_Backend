@@ -29,7 +29,7 @@ class RequestOrderRepository
 
         try {
             $request = RequestOrder::select('order_requests.*')
-            ->with('user', 'order', 'order.task', 'order.professional') 
+            ->with('user', 'order', 'order.task', 'order.professional', 'order.task.profession', 'order.task.profession.section') 
             ->where('user_id', '=', $user->id)
             ->get();
         } catch (Exception $e) {
@@ -49,7 +49,7 @@ class RequestOrderRepository
 
         try {
             $request = RequestOrder::select('order_requests.*')
-            ->with('user', 'order', 'order.task', 'order.professional') 
+            ->with('user', 'order', 'order.task', 'order.professional', 'order.task.profession', 'order.task.profession.section') 
             ->whereHas('order.professional', function ($q) use ($user) {
                 $q->where('professional_id', '=', $user->id);
             })
