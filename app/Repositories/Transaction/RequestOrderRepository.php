@@ -114,14 +114,17 @@ class RequestOrderRepository
         if (!$this->modelCanRequestAnOrder($token)) {
             throw new TransactionDeniedException('Professional is not allowed to cancel requests', 401);
         }
+        
+        $request = RequestOrder::where('id', '=', $id)->first();
+        
+        if($request->status == 3) {
+            throw new TransactionDeniedException('Request was already canceled.', 401);
+        }
+
 
         try {
             DB::beginTransaction();
-            
-            $list_request = RequestOrder::where('id', '=', $id)
-            ->where('status', '=', 1)
-            ->get();
-
+            $request->delete();
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();
