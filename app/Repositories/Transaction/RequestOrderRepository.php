@@ -108,4 +108,25 @@ class RequestOrderRepository
         }
         return false;
     }
+
+    public function cancel($token, $id) {
+        
+        if (!$this->modelCanRequestAnOrder($token)) {
+            throw new TransactionDeniedException('Professional is not allowed to cancel requests', 401);
+        }
+
+        try {
+            DB::beginTransaction();
+            
+            $list_request = RequestOrder::where('id', '=', $id)
+            ->where('status', '=', 1)
+            ->get();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            dd($e->getMessage());
+            return response()->json(['message' => 'SQL Transaction Error'], 500);
+        }
+    }
 }

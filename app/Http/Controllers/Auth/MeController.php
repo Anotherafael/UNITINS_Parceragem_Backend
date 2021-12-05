@@ -53,9 +53,7 @@ class MeController extends Controller
         $validate = Validator::make($request->all(), [
             'name' => 'string',
             'phone' => 'string',
-            'photo_path' => 'image|mimes:jpg,jpeg,png',
             'new_password' => 'string|min:6',
-            'password' => 'required|string|min:6',
         ]);
 
         if ($validate->fails()) {

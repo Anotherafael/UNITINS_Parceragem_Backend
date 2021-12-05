@@ -28,13 +28,13 @@ class MeRepository
 
     public function updateMe(Request $request, $token)
     {
-        $fields = $request->only('name', 'phone', 'photo_path', 'password', 'new_password');
+        $fields = $request->only('name', 'phone', 'photo_path', 'new_password');
         $selectedProvider = $this->getProvider($token);
         $user = $selectedProvider->where('id', '=', $token->tokenable_id)->first();
 
-        if(!Hash::check($fields['password'], $user->password)) {
-            throw new AuthorizationException('Wrong credentials', 401);
-        }
+        // if(!Hash::check($fields['password'], $user->password)) {
+        //     throw new AuthorizationException('Wrong credentials', 401);
+        // }
 
         if ($request->hasFile('photo_path')) {
             if ($user->photo_path && Storage::exists($user->photo_path)) {
@@ -49,7 +49,9 @@ class MeRepository
 
         try {
             DB::beginTransaction();
-            $fields['password'] = Hash::make($fields['new_password']);
+            // if ($fields['new_password'].isNonEmptyString()) {
+            //     $fields['password'] = Hash::make($fields['new_password']);
+            // }
             $user->fill($fields);
             $user->save();
             DB::commit();

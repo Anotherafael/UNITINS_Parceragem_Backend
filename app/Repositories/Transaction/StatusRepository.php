@@ -24,7 +24,7 @@ class StatusRepository
             DB::beginTransaction();
 
             // Status on RequestOrder model is gonna be Accepted
-            $request_order = $this->getRequestOrder($field);
+            $request_order = RequestOrder::find($field)->first();
             $request_order->status = 2;
             $request_order->save();
             
@@ -61,7 +61,7 @@ class StatusRepository
             DB::beginTransaction();
 
             // Status on RequestOrder model is gonna be Rejected
-            $request_order = $this->getRequestOrder($field);
+            $request_order = RequestOrder::find($field)->first();
             $request_order->status = 3;
             $request_order->save();
 
@@ -72,10 +72,6 @@ class StatusRepository
             DB::rollback();
             throw new Exception('Error on SQL transaction', 500);
         }
-    }
-
-    public function getRequestOrder($id) : RequestOrder {
-        return RequestOrder::find($id);
     }
 
     public function modelCanAcceptOrRejectAnOrder($token) {

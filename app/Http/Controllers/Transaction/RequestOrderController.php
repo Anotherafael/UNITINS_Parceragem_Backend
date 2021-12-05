@@ -109,8 +109,15 @@ class RequestOrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $token = $this->findToken($request);
+        
+        try {
+            $this->repository->cancel($token, $id);
+            return $this->success([], "Order canceled");
+        } catch (Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 }
