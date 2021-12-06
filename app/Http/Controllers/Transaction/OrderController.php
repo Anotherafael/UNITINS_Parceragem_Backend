@@ -101,6 +101,8 @@ class OrderController extends Controller
         try {
             $this->repository->cancel($token, $id);
             return $this->success([], "Order canceled");
+        } catch (TransactionDeniedException $e) {
+            return $this->error($e->getMessage(), $e->getCode());
         } catch (Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

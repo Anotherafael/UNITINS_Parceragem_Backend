@@ -121,7 +121,6 @@ class RequestOrderRepository
             throw new TransactionDeniedException('Request was already canceled.', 401);
         }
 
-
         try {
             DB::beginTransaction();
             $request->delete();
