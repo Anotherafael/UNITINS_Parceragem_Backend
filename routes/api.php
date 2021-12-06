@@ -32,20 +32,21 @@ Route::group(['prefix' => 'v1'], function () {
             Route::get('professions/{id}', ['as' => 'get_professions', 'uses' => 'Service\ProfessionController@index']);
             Route::get('tasks/{id}', ['as' => 'get_tasks', 'uses' => 'Service\TaskController@index']);
         });
-
+        
         Route::prefix('transaction')->group(function () {
             Route::apiResource('request-order', 'Transaction\RequestOrderController')->except('create', 'edit', 'update');
             Route::apiResource('order', 'Transaction\OrderController')->except('create', 'edit', 'update');
-
+            
             Route::get('pending-orders/{id}', ['as' => 'get_pending_orders', 'uses' => 'Transaction\OrderController@getPendingOrders']);
-
+            
             Route::get('myorders', ['as' => 'get_myorders', 'uses' => 'Transaction\OrderController@getMyOrders']);
             Route::get('myrequests/users', ['as' => 'user_get_myrequests', 'uses' => 'Transaction\RequestOrderController@getMyRequestsByUser']);
             Route::get('myrequests/professionals', ['as' => 'pro_get_myrequests', 'uses' => 'Transaction\RequestOrderController@getMyRequestsByProfessional']);
         });
-
+        
         Route::prefix('features')->group(function () {
             Route::post('add-profession', ['as' => 'add_profession', 'uses' => 'Features\ProfessionalProfessionsController@addProfession']);
+            Route::get('professions', ['as' => 'get_all_professions', 'uses' => 'Service\ProfessionController@allProfessions']);
         });
 
         Route::group(['prefix' => 'order'], function () {
